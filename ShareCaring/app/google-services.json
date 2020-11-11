@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "295500926876",
+    "firebase_url": "https://sharecaring-22b10.firebaseio.com",
+    "project_id": "sharecaring-22b10",
+    "storage_bucket": "sharecaring-22b10.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:295500926876:android:11a2ee490da80d6cc88259",
+        "android_client_info": {
+          "package_name": "com.example.sharecaring"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "295500926876-202paah2a3hrv3u3dfdcf5shg1t0bama.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sharecaring",
+            "certificate_hash": "002b068f7e2c881b713d94a68a6378929b056274"
+          }
+        },
+        {
+          "client_id": "295500926876-hp5i6f4me6r45sbtflee3gkhps1ijave.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAN6Xz4J7FmgZ6luEzSwrs-x6Q3TWVFZ3E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "295500926876-hp5i6f4me6r45sbtflee3gkhps1ijave.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
