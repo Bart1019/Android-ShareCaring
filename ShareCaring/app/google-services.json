@@ -8,6 +8,43 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:295500926876:android:31c500608274add7c88259",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "295500926876-endp2ko0rkdikl20qkq8v7hu6aliss6d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.myapplication",
+            "certificate_hash": "002b068f7e2c881b713d94a68a6378929b056274"
+          }
+        },
+        {
+          "client_id": "295500926876-hp5i6f4me6r45sbtflee3gkhps1ijave.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAN6Xz4J7FmgZ6luEzSwrs-x6Q3TWVFZ3E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "295500926876-2frf0dd5log8j97lrj1tblmaq6nnq942.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:295500926876:android:11a2ee490da80d6cc88259",
         "android_client_info": {
           "package_name": "com.example.sharecaring"
@@ -36,7 +73,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "295500926876-hp5i6f4me6r45sbtflee3gkhps1ijave.apps.googleusercontent.com",
+              "client_id": "295500926876-2frf0dd5log8j97lrj1tblmaq6nnq942.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
