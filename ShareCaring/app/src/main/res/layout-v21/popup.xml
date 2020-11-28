@@ -72,19 +72,19 @@
                         android:text="@string/account_exist"
                         android:textColor="@color/colorMyGray"
                         android:textSize="14sp"
-                        android:layout_marginLeft="40dp"/>
+                        android:layout_marginLeft="-40dp"/>
 
                     <Button
                         android:id="@+id/logInBtn"
                         android:background="?android:attr/selectableItemBackground"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_width="2dp"
+                        android:layout_height="20dp"
                         android:gravity="center_vertical"
+                        android:layout_weight="1"
                         android:text="@string/log_in"
                         android:textColor="@color/colorMyGray"
                         android:textSize="14sp"
-                        android:layout_marginStart="5dp" />
+                        android:layout_marginStart="5dp"/>
                 </LinearLayout>
 
 
