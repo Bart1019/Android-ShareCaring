@@ -3,4 +3,13 @@
     <string name="facebook_app_id">3097323387035781</string>
     <string name="fb_login_protocol_scheme">fb3097323387035781</string>
 
+    <string name="app_name1">Share</string>
+    <string name="app_name2">Caring</string>
+    <string name="google_btn">Sign in with Google</string>
+    <string name="fb_btn">Sign in with Facebook</string>
+    <string name="sign_email">Sign in with email</string>
+    <string name="account_exist">Already have an account?</string>
+    <string name="log_in"><u>Log in</u></string>
+    <string name="content">image content</string>
+    <string name="options">OTHER OPTIONS</string>
 </resources>
