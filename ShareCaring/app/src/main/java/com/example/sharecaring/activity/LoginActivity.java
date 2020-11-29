@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.sharecaring.R;
+import com.example.sharecaring.model.IntentOpener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -44,7 +45,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.btnRegister:
-                startActivity(new Intent(this, RegisterActivity.class));
+                IntentOpener.openIntent(LoginActivity.this, RegisterActivity.class);
                 break;
             case R.id.btnLogIn:
                 userLogin();
@@ -78,7 +79,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
-                    startActivity(new Intent(LoginActivity.this, InformationActivity.class));
+                    IntentOpener.openIntent(LoginActivity.this, InformationActivity.class);
                 } else {
                     Toast.makeText(LoginActivity.this, "Failed to log in", Toast.LENGTH_LONG).show();
                 }

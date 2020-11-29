@@ -1,6 +1,7 @@
 package com.example.sharecaring.activity;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -11,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.sharecaring.model.IntentOpener;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -133,8 +135,7 @@ public class StartActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
-            Intent intent = new Intent(getApplicationContext(), InformationActivity.class);
-            startActivity(intent);
+            IntentOpener.openIntent(StartActivity.this, InformationActivity.class);
         } else {
             Toast.makeText(this, getResources().getString(R.string.toast_fb_firebase), Toast.LENGTH_LONG).show();
         }
@@ -158,30 +159,20 @@ public class StartActivity extends AppCompatActivity {
         logIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                redirect(true);
+                IntentOpener.openIntent(StartActivity.this, LoginActivity.class);
+                optionsDialog.dismiss();
             }
         });
 
         logInEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                redirect(false);
+                IntentOpener.openIntent(StartActivity.this, RegisterActivity.class);
+                optionsDialog.dismiss();
             }
         });
 
         optionsDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         optionsDialog.show();
-    }
-
-    private void redirect(boolean login) {
-        Intent intent;
-        if(login) {
-            intent = new Intent(getApplicationContext(), LoginActivity.class);
-        } else {
-            intent = new Intent(getApplicationContext(), RegisterActivity.class);
-        }
-
-        startActivity(intent);
-        optionsDialog.dismiss();
     }
 }

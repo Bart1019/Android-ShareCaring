@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.sharecaring.R;
+import com.example.sharecaring.model.IntentOpener;
 import com.example.sharecaring.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -76,7 +77,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()) {
                                         Toast.makeText(RegisterActivity.this, "User has been registered", Toast.LENGTH_LONG).show();
-                                        startActivity(new Intent(RegisterActivity.this, InformationActivity.class));
+                                        IntentOpener.openIntent(RegisterActivity.this, InformationActivity.class);
                                     }else {
                                         Toast.makeText(RegisterActivity.this, "Failed to register", Toast.LENGTH_LONG).show();
                                     }
