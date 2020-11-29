@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.sharecaring.R;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,13 +33,14 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Arrays;
+
 public class StartActivity extends AppCompatActivity {
     private static final String TAG = StartActivity.class.getName();
     private Dialog optionsDialog;
     private ImageView closePopUp;
-    private Button optionsBtn, logInEmail, logIn;
+    private Button optionsBtn, logInEmail, logIn, logInFb;
     private CallbackManager mCallbackManager;
-    private LoginButton loginButton;
     private FirebaseAuth mAuth;
 
     @Override
@@ -54,23 +56,29 @@ public class StartActivity extends AppCompatActivity {
 
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
-        loginButton = findViewById(R.id.fbLogBtn);
-        loginButton.setReadPermissions("email", "public_profile");
-        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                handleFacebookAccessToken(loginResult.getAccessToken());
-            }
+        logInFb = findViewById(R.id.fbBtn);
 
+        logInFb.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCancel() {
-                Log.d(TAG, "facebook:onCancel");
-            }
+            public void onClick(View view) {
+                LoginManager.getInstance().logInWithReadPermissions(StartActivity.this, Arrays.asList("email", "public_profile"));
+                LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                        handleFacebookAccessToken(loginResult.getAccessToken());
+                    }
 
-            @Override
-            public void onError(FacebookException error) {
-                Log.d(TAG, "facebook:onError", error);
+                    @Override
+                    public void onCancel() {
+                        Log.d(TAG, "facebook:onCancel");
+                    }
+
+                    @Override
+                    public void onError(FacebookException error) {
+                        Log.d(TAG, "facebook:onError", error);
+                    }
+                });
             }
         });
 
@@ -83,6 +91,20 @@ public class StartActivity extends AppCompatActivity {
                 showPopUp();
             }
         });
+    }
+
+    /*@Override this is commented because it will remeber the fb signed in user - need to add sign out possibility in profile
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        updateUI(currentUser);
+    }*/
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) { //this enables execution of handleFacebook..
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void handleFacebookAccessToken(AccessToken token) { //called when the user gives the permission to access their data

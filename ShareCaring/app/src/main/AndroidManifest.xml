@@ -37,8 +37,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.InformationActivity"
-            android:parentActivityName=".activity.StartActivity"/>
+        <activity android:name=".activity.InformationActivity"/>
         <activity android:name=".activity.RegisterActivity" />
         <activity android:name=".activity.LoginActivity"/>
 
