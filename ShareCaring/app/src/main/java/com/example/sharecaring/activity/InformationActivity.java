@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.sharecaring.R;
+import com.example.sharecaring.model.IntentOpener;
 import com.facebook.appevents.suggestedevents.ViewOnClickListener;
 
 public class InformationActivity extends AppCompatActivity implements View.OnClickListener {
@@ -27,7 +28,7 @@ public class InformationActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.btnGotIt:
-                startActivity(new Intent(this, MapsActivity.class));
+                IntentOpener.openIntent(InformationActivity.this, MapsActivity.class);
                 break;
 
         }
