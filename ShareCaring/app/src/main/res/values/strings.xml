@@ -12,4 +12,5 @@
     <string name="log_in"><u>Log in</u></string>
     <string name="content">image content</string>
     <string name="options">OTHER OPTIONS</string>
+    <string name="toast_fb_firebase">Please sign in to continue</string>
 </resources>
