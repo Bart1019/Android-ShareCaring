@@ -13,4 +13,6 @@
     <string name="content">image content</string>
     <string name="options">OTHER OPTIONS</string>
     <string name="toast_fb_firebase">Please sign in to continue</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="got_it">Got it</string>
 </resources>
