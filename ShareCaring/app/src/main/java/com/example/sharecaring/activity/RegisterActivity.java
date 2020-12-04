@@ -22,7 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
-    private EditText editTextEmail, editTextName, editTextPassword;
+    private EditText editTextEmail, editTextFirstName, editTextLastName, editTextPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,8 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         Button register = (Button)findViewById(R.id.btnRegister);
         editTextEmail = (EditText)findViewById(R.id.editTextEmail);
-        editTextName = (EditText)findViewById(R.id.editTextFullName);
+        editTextFirstName = (EditText)findViewById(R.id.editTextFirstName);
+        editTextLastName = (EditText)findViewById(R.id.editTextLastName);
         editTextPassword = (EditText)findViewById(R.id.editTextPassword);
         register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,12 +44,19 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void registerUser() {
         final String email = editTextEmail.getText().toString().trim();
-        final String fullName = editTextName.getText().toString().trim();
+        final String firstName = editTextFirstName.getText().toString().trim();
+        final String lastName = editTextLastName.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
 
-        if(fullName.isEmpty()) {
-            editTextName.setError("Full name is required");
-            editTextName.requestFocus();
+        if(firstName.isEmpty()) {
+            editTextFirstName.setError("First name is required");
+            editTextFirstName.requestFocus();
+            return;
+        }
+
+        if(lastName.isEmpty()) {
+            editTextLastName.setError("Last name is required");
+            editTextLastName.requestFocus();
             return;
         }
 
@@ -69,7 +77,7 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()) {
-                            User user = new User(fullName, email);
+                            User user = new User(firstName, lastName, email);
                             FirebaseDatabase.getInstance().getReference("Users")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
