@@ -15,4 +15,5 @@
     <string name="toast_fb_firebase">Please sign in to continue</string>
     <string name="title_activity_maps">Map</string>
     <string name="got_it">Got it</string>
+    <string name="log_out">LOG OUT</string>
 </resources>

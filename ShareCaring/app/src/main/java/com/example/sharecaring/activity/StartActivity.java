@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.sharecaring.model.IntentOpener;
+import com.example.sharecaring.model.User;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -34,6 +35,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 
@@ -43,14 +49,12 @@ public class StartActivity extends AppCompatActivity {
     private Button optionsBtn, logInEmail, logIn, logInFb;
     private CallbackManager mCallbackManager;
     private FirebaseAuth mAuth;
+    FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
-
-        //initialize Facebook SDK
-        FacebookSdk.sdkInitialize(StartActivity.this);
 
         //initialize Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -89,13 +93,16 @@ public class StartActivity extends AppCompatActivity {
         });
     }
 
-    /*@Override this is commented because it will remeber the fb signed in user - need to add sign out possibility in profile
+    @Override //if the user is signed in, automatically redirects to maps
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
-    }*/
+        user = mAuth.getCurrentUser();
+        if (user != null) {
+            updateUI(user, MapsActivity.class);
+        }
+
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) { //this enables execution of handleFacebook..
@@ -104,7 +111,6 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private void handleFacebookAccessToken(AccessToken token) { //called when the user gives the permission to access their data
-
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -112,23 +118,21 @@ public class StartActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
+                            user = mAuth.getCurrentUser();
+                            updateUI(user, InformationActivity.class);
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(StartActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            updateUI(null);
+                            updateUI(null, null);
                         }
                     }
                 });
     }
 
-    private void updateUI(FirebaseUser user) {
+    private void updateUI(FirebaseUser user, Class c) {
         if (user != null) {
-            IntentOpener.openIntent(StartActivity.this, InformationActivity.class);
-        } else {
-            Toast.makeText(this, getResources().getString(R.string.toast_fb_firebase), Toast.LENGTH_LONG).show();
+            IntentOpener.openIntent(StartActivity.this, c);
         }
     }
 
