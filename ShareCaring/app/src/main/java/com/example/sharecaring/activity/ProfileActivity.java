@@ -67,7 +67,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 } else {
                     if(user != null) {
                         String str = user.getDisplayName();
-                        firstNameFromDB = str;   //to first space
+                        firstNameFromDB = str.substring(0, str.indexOf(' '));   //to first space
                         lastNameFromDB = str.substring(str.indexOf(' ') + 1); //rest
                         emailFromDB = user.getEmail();
                     }
