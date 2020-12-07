@@ -199,6 +199,7 @@ public class StartActivity extends AppCompatActivity {
     private void updateUI(FirebaseUser user, Class c) {
         if (user != null) {
             IntentOpener.openIntent(StartActivity.this, c);
+            finish();
         }
     }
 

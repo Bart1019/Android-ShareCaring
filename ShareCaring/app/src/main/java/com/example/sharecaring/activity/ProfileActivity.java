@@ -95,6 +95,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             mAuth.signOut();
             LoginManager.getInstance().logOut();
             IntentOpener.openIntent(ProfileActivity.this, StartActivity.class);
+            finish();
         }
+
     }
 }
