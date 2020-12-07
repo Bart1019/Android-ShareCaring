@@ -129,7 +129,6 @@ public class StartActivity extends AppCompatActivity {
         if (user != null) {
             updateUI(user, MapsActivity.class);
         }
-
     }
 
     @Override

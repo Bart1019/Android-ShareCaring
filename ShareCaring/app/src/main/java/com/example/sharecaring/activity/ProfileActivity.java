@@ -93,8 +93,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             IntentOpener.openIntent(ProfileActivity.this, MyOffersActivity.class);
         } else if (v.getId() == R.id.btnLogOut) {
             mAuth.signOut();
-            LoginManager.getInstance().logOut();
-            IntentOpener.openIntent(ProfileActivity.this, StartActivity.class);
+            IntentOpener.openIntent(this, StartActivity.class);
             finish();
         }
 
