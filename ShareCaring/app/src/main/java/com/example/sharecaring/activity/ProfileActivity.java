@@ -78,8 +78,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 editTextEmail.setText(emailFromDB);
             }
 
-
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {}
         });

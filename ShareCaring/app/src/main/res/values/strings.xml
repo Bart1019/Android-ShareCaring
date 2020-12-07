@@ -16,4 +16,5 @@
     <string name="title_activity_maps">Map</string>
     <string name="got_it">Got it</string>
     <string name="log_out">LOG OUT</string>
+    <string name="toast_auth">Authentication failed</string>
 </resources>

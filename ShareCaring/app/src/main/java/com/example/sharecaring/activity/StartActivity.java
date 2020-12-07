@@ -1,5 +1,6 @@
 package com.example.sharecaring.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -51,15 +52,14 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 
-public class StartActivity extends AppCompatActivity {
+public class StartActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int RC_SIGN_IN = 120;  //can be different number
 
     private Dialog optionsDialog;
-    private ImageView closePopUp;
-    private Button optionsBtn, logInEmail, logIn, logInFb, logInGoogle;
     private CallbackManager mCallbackManager;
     private FirebaseAuth mAuth;
-    GoogleSignInClient googleSignInClient;
+    private FirebaseUser user;
+    private GoogleSignInClient googleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,57 +78,25 @@ public class StartActivity extends AppCompatActivity {
 
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
-        logInFb = findViewById(R.id.fbBtn);
+        Button logInFb = findViewById(R.id.fbBtn);
+        logInFb.setOnClickListener(this);
 
         //initialize google login button
-        logInGoogle = findViewById(R.id.googleBtn);
-
-        logInFb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LoginManager.getInstance()
-                        .logInWithReadPermissions(StartActivity.this, Arrays.asList("email", "public_profile"));
-                LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        handleFacebookAccessToken(loginResult.getAccessToken());
-                    }
-
-                    @Override
-                    public void onCancel() {}
-
-                    @Override
-                    public void onError(FacebookException error) {}
-                });
-            }
-        });
-
-        logInGoogle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signInGoogle();
-            }
-        });
+        Button logInGoogle = findViewById(R.id.googleBtn);
+        logInGoogle.setOnClickListener(this);
 
         optionsDialog = new Dialog(this);
 
-        optionsBtn = findViewById(R.id.optionsBtn);
-        optionsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showPopUp();
-            }
-        });
+        Button optionsBtn = findViewById(R.id.optionsBtn);
+        optionsBtn.setOnClickListener(this);
     }
 
     @Override //if the user is signed in, automatically redirects to maps
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user != null) {
-            updateUI(user, MapsActivity.class);
-        }
+        user = mAuth.getCurrentUser();
+        updateUI(user, MapsActivity.class);
     }
 
     @Override
@@ -146,7 +114,7 @@ public class StartActivity extends AppCompatActivity {
                     firebaseAuthWithGoogle(account.getIdToken());
                 } catch (ApiException e) {
                     // Google Sign In failed, update UI appropriately
-                    Log.w("StartActivity", "Google sign in failed", e);
+                    Log.w("StartActivity", e);
                 }
             } else {
                 Log.w("StartActivity", task.getException());
@@ -157,37 +125,26 @@ public class StartActivity extends AppCompatActivity {
 
     private void handleFacebookAccessToken(AccessToken token) { //called when the user gives the permission to access their data
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user, InformationActivity.class);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(StartActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            updateUI(null, null);
-                        }
-                    }
-                });
+        credentialSignIn(credential);
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        credentialSignIn(credential);
+    }
+
+    private void credentialSignIn(AuthCredential credential) {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            user = mAuth.getCurrentUser();
                             updateUI(user, InformationActivity.class);
                         } else {
                             // If sign in fails, display a message to the user.
-                            Toast.makeText(StartActivity.this, "Authentication failed.",
+                            Toast.makeText(StartActivity.this, getResources().getText(R.string.toast_auth),
                                     Toast.LENGTH_SHORT).show();
                             updateUI(null, null);
                         }
@@ -202,43 +159,70 @@ public class StartActivity extends AppCompatActivity {
         }
     }
 
-
-    private void showPopUp() {
-        optionsDialog.setContentView(R.layout.popup);
-
-        closePopUp = optionsDialog.findViewById(R.id.closePopUp);
-        logIn = optionsDialog.findViewById(R.id.logInBtn);
-        logInEmail = optionsDialog.findViewById(R.id.emailBtn);
-
-        closePopUp.setOnClickListener(new View.OnClickListener() {
+    private void signInFb() {
+        LoginManager.getInstance()
+                .logInWithReadPermissions(StartActivity.this, Arrays.asList("email", "public_profile"));
+        LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
-            public void onClick(View view) {
-                optionsDialog.dismiss();
+            public void onSuccess(LoginResult loginResult) {
+                handleFacebookAccessToken(loginResult.getAccessToken());
             }
-        });
 
-        logIn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                IntentOpener.openIntent(StartActivity.this, LoginActivity.class);
-                optionsDialog.dismiss();
-            }
-        });
+            public void onCancel() {}
 
-        logInEmail.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                IntentOpener.openIntent(StartActivity.this, RegisterActivity.class);
-                optionsDialog.dismiss();
-            }
+            public void onError(FacebookException error) {}
         });
-
-        optionsDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        optionsDialog.show();
     }
 
     private void signInGoogle() { //sign in for google
         Intent signInIntent = googleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    private void showPopUp() {
+        optionsDialog.setContentView(R.layout.popup);
+
+        ImageView closePopUp = optionsDialog.findViewById(R.id.closePopUp);
+        Button logIn = optionsDialog.findViewById(R.id.logInBtn);
+        Button logInEmail = optionsDialog.findViewById(R.id.emailBtn);
+
+        closePopUp.setOnClickListener(this);
+        logIn.setOnClickListener(this);
+        logInEmail.setOnClickListener(this);
+
+        optionsDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        optionsDialog.show();
+    }
+
+    private void handlePopUpActions(Class c) {
+        IntentOpener.openIntent(StartActivity.this, c);
+        optionsDialog.dismiss();
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()) {
+            case R.id.fbBtn:
+                signInFb();
+                break;
+            case R.id.googleBtn:
+                signInGoogle();
+                break;
+            case R.id.optionsBtn:
+                showPopUp();
+                break;
+            case R.id.closePopUp:
+                optionsDialog.dismiss();
+                break;
+            case R.id.logInBtn:
+                handlePopUpActions(LoginActivity.class);
+                break;
+            case R.id.emailBtn:
+                handlePopUpActions(RegisterActivity.class);
+                break;
+        }
     }
 }
