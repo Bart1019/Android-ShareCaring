@@ -54,7 +54,7 @@ import java.util.Arrays;
 
 import static com.example.sharecaring.service.DatabaseService.writeNewUser;
 
-public class StartActivity extends AppCompatActivity  {
+public class StartActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int RC_SIGN_IN = 120;  //can be different number
 
     private Dialog optionsDialog;
@@ -82,21 +82,16 @@ public class StartActivity extends AppCompatActivity  {
         FacebookSdk.sdkInitialize(getApplicationContext());
         mCallbackManager = CallbackManager.Factory.create();
         Button logInFb = findViewById(R.id.fbBtn);
-        logInFb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signInFb();
-            }
-        });
+        logInFb.setOnClickListener(this);
 
         //initialize google login button
         Button logInGoogle = findViewById(R.id.googleBtn);
-        //logInGoogle.setOnClickListener(this);
+        logInGoogle.setOnClickListener(this);
 
         optionsDialog = new Dialog(this);
 
         Button optionsBtn = findViewById(R.id.optionsBtn);
-        //optionsBtn.setOnClickListener(this);
+        optionsBtn.setOnClickListener(this);
     }
 
     @Override //if the user is signed in, automatically redirects to maps
@@ -201,9 +196,9 @@ public class StartActivity extends AppCompatActivity  {
         Button logIn = optionsDialog.findViewById(R.id.logInBtn);
         Button logInEmail = optionsDialog.findViewById(R.id.emailBtn);
 
-        //closePopUp.setOnClickListener(this);
-        //logIn.setOnClickListener(this);
-        //logInEmail.setOnClickListener(this);
+        closePopUp.setOnClickListener(this);
+        logIn.setOnClickListener(this);
+        logInEmail.setOnClickListener(this);
 
         optionsDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         optionsDialog.show();
@@ -214,13 +209,13 @@ public class StartActivity extends AppCompatActivity  {
         optionsDialog.dismiss();
     }
 
-    /*@SuppressLint("NonConstantResourceId")
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
-            //case R.id.fbBtn:
-                //signInFb();
-                //break;
+            case R.id.fbBtn:
+                signInFb();
+                break;
             case R.id.googleBtn:
                 signInGoogle();
                 break;
@@ -237,5 +232,5 @@ public class StartActivity extends AppCompatActivity  {
                 handlePopUpActions(RegisterActivity.class);
                 break;
         }
-    }*/
+    }
 }
