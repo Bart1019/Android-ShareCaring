@@ -52,7 +52,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 
-public class StartActivity extends AppCompatActivity implements View.OnClickListener {
+import static com.example.sharecaring.service.DatabaseService.writeNewUser;
+
+public class StartActivity extends AppCompatActivity  {
     private static final int RC_SIGN_IN = 120;  //can be different number
 
     private Dialog optionsDialog;
@@ -77,18 +79,24 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         googleSignInClient = GoogleSignIn.getClient(StartActivity.this, gso);
 
         // Initialize Facebook Login button
+        FacebookSdk.sdkInitialize(getApplicationContext());
         mCallbackManager = CallbackManager.Factory.create();
         Button logInFb = findViewById(R.id.fbBtn);
-        logInFb.setOnClickListener(this);
+        logInFb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signInFb();
+            }
+        });
 
         //initialize google login button
         Button logInGoogle = findViewById(R.id.googleBtn);
-        logInGoogle.setOnClickListener(this);
+        //logInGoogle.setOnClickListener(this);
 
         optionsDialog = new Dialog(this);
 
         Button optionsBtn = findViewById(R.id.optionsBtn);
-        optionsBtn.setOnClickListener(this);
+        //optionsBtn.setOnClickListener(this);
     }
 
     @Override //if the user is signed in, automatically redirects to maps
@@ -141,6 +149,11 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             user = mAuth.getCurrentUser();
+                            String str = user.getDisplayName();
+                            String fName = str.substring(0, str.indexOf(' '));   //to first space
+                            String lName = str.substring(str.indexOf(' ') + 1); //rest
+
+                            writeNewUser(user.getUid(), fName, lName, user.getEmail());
                             updateUI(user, InformationActivity.class);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -188,9 +201,9 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         Button logIn = optionsDialog.findViewById(R.id.logInBtn);
         Button logInEmail = optionsDialog.findViewById(R.id.emailBtn);
 
-        closePopUp.setOnClickListener(this);
-        logIn.setOnClickListener(this);
-        logInEmail.setOnClickListener(this);
+        //closePopUp.setOnClickListener(this);
+        //logIn.setOnClickListener(this);
+        //logInEmail.setOnClickListener(this);
 
         optionsDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         optionsDialog.show();
@@ -201,13 +214,13 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         optionsDialog.dismiss();
     }
 
-    @SuppressLint("NonConstantResourceId")
+    /*@SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.fbBtn:
-                signInFb();
-                break;
+            //case R.id.fbBtn:
+                //signInFb();
+                //break;
             case R.id.googleBtn:
                 signInGoogle();
                 break;
@@ -224,5 +237,5 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                 handlePopUpActions(RegisterActivity.class);
                 break;
         }
-    }
+    }*/
 }

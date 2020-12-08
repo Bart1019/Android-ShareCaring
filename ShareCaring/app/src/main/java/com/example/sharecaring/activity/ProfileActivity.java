@@ -64,14 +64,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     firstNameFromDB = snapshot.child("firstName").getValue().toString();
                     lastNameFromDB = snapshot.child("lastName").getValue().toString();
                     emailFromDB = snapshot.child("email").getValue().toString();
-                } else {
-                    if(user != null) {
-                        String str = user.getDisplayName();
-                        firstNameFromDB = str.substring(0, str.indexOf(' '));   //to first space
-                        lastNameFromDB = str.substring(str.indexOf(' ') + 1); //rest
-                        emailFromDB = user.getEmail();
-                    }
-
                 }
                 editTextFirstName.setText(firstNameFromDB);
                 editTextLastName.setText(lastNameFromDB);
