@@ -16,5 +16,8 @@
     <string name="title_activity_maps">Map</string>
     <string name="got_it">Got it</string>
     <string name="log_out">LOG OUT</string>
-    <string name="toast_auth">Authentication failed</string>
+    <string name="toast_auth">Authentication failed, the email is already registered with different provider</string>
+    <string name="edit_prof">Edit profile</string>
+    <string name="upload_profile_pic">Upload photo</string>
+    <string name="finish_edit">Done</string>
 </resources>

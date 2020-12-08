@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -49,6 +50,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.Arrays;
 
@@ -147,7 +150,6 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                             String str = user.getDisplayName();
                             String fName = str.substring(0, str.indexOf(' '));   //to first space
                             String lName = str.substring(str.indexOf(' ') + 1); //rest
-
                             writeNewUser(user.getUid(), fName, lName, user.getEmail());
                             updateUI(user, InformationActivity.class);
                         } else {
