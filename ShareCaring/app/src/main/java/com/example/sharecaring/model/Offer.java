@@ -18,4 +18,28 @@ public class Offer implements Serializable {
         this.medication = medication;
         this.transport = transport;
     }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public boolean isAnimals() {
+        return animals;
+    }
+
+    public boolean isShopping() {
+        return shopping;
+    }
+
+    public boolean isMedication() {
+        return medication;
+    }
+
+    public boolean isTransport() {
+        return transport;
+    }
 }
