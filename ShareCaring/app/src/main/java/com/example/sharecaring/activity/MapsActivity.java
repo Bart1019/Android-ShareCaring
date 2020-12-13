@@ -7,8 +7,11 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -26,12 +29,27 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener {
 
+    private static final String TAG = "MapsActivity";
     private GoogleMap mMap;
     public static final int FINE_LOCATION_ACCESS_REQUEST_CODE = 10001;
     private FusedLocationProviderClient mFusedLocationClient;
+    DatabaseReference ref;
+    Geocoder geocoder;
+    List<Address> addressList = new ArrayList<>();
+    LatLng addressLatLng;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +87,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         enableUserLocation();
         getCurrentLocation();
-
+        geocoder = new Geocoder(MapsActivity.this);
+        getAddresses();
     }
 
-     private void enableUserLocation() {
+    private void getAddresses() {
+        ref = FirebaseDatabase.getInstance().getReference("Offers");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot userId : snapshot.getChildren()) {
+                    for(DataSnapshot offerId : userId.getChildren()) {
+                        String addressFromDb = offerId.child("address").getValue().toString();
+                        try {
+                            addressList = geocoder.getFromLocationName(addressFromDb,1);
+                        } catch (IOException e) {
+                            Log.e(TAG, "getAddresses: IOException: " + e.getMessage());
+                        }
+
+                        if(addressList.size() > 0) {
+                            Address address = addressList.get(0);
+                            addressLatLng = new LatLng(address.getLatitude(), address.getLongitude());
+                            mMap.addMarker(new MarkerOptions()
+                                .position(addressLatLng)
+                                .title(offerId.child("description").getValue().toString())
+                            );
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void enableUserLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
