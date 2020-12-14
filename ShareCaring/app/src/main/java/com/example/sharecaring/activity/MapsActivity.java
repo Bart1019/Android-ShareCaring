@@ -87,12 +87,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         enableUserLocation();
         getCurrentLocation();
-        geocoder = new Geocoder(MapsActivity.this);
+        //geocoder = new Geocoder(MapsActivity.this);
         getAddresses();
     }
 
     private void getAddresses() {
-        ref = FirebaseDatabase.getInstance().getReference("Offers");
+        /*ref = FirebaseDatabase.getInstance().getReference("Offers");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -102,7 +102,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         try {
                             addressList = geocoder.getFromLocationName(addressFromDb,1);
                         } catch (IOException e) {
-                            Log.e(TAG, "getAddresses: IOException: " + e.getMessage());
+                            e.printStackTrace();
+                            //Log.e(TAG, "getAddresses: IOException: " + e.getMessage());
                         }
 
                         if(addressList.size() > 0) {
@@ -122,6 +123,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
+        */
     }
 
     private void enableUserLocation() {
