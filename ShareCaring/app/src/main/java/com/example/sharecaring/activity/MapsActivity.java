@@ -57,6 +57,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
         Button buttonProfile = (Button)findViewById(R.id.btnProfile);
         buttonProfile.setOnClickListener(this);
+        Button buttonOffersList = (Button)findViewById(R.id.btnOfferList);
+        buttonOffersList.setOnClickListener(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -70,6 +72,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onClick(View v) {
         if (v.getId() == R.id.btnProfile) {
             IntentOpener.openIntent(MapsActivity.this, ProfileActivity.class);
+        } else if(v.getId() == R.id.btnOfferList) {
+            IntentOpener.openIntent(MapsActivity.this, OfferList.class);
         }
     }
 
