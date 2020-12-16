@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.sharecaring.R;
+import com.example.sharecaring.model.ChatConfig;
 import com.example.sharecaring.model.IntentOpener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -29,6 +30,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -65,6 +68,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        //initialize comet chat
+        ChatConfig.initCometChat(this);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        ChatConfig.createUser(user.getUid(), user.getDisplayName());
+        ChatConfig.loginToChat(user.getUid());
     }
 
 

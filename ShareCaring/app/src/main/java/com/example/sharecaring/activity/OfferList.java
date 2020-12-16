@@ -3,6 +3,7 @@ package com.example.sharecaring.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,6 +11,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.sharecaring.R;
+import com.example.sharecaring.model.IntentOpener;
+import com.example.sharecaring.model.Offer;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -18,12 +21,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class OfferList extends AppCompatActivity implements View.OnClickListener {
+public class OfferList extends AppCompatActivity {
 
     DatabaseReference ref;
     FirebaseUser user;
     FirebaseAuth mAuth;
-    String description, address, medication, animals, shopping, transport;
+    String description, address, medication, animals, shopping, transport, userid;
     LinearLayout layoutList;
     Button chatBtn;
 
@@ -32,22 +35,14 @@ public class OfferList extends AppCompatActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offer_list);
         layoutList = findViewById(R.id.layout_list);
-        chatBtn = findViewById(R.id.btnChat);
-        chatBtn.setOnClickListener(this);
+
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        userid = user.getUid();
         getOfferList();
     }
 
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.btnChat) {
-
-        }
-    }
-
     private void getOfferList() {
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-        final String userid = user.getUid();
         ref = FirebaseDatabase.getInstance().getReference("Offers");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -79,5 +74,16 @@ public class OfferList extends AppCompatActivity implements View.OnClickListener
         TextView myOfferTextView = (TextView)myOfferView.findViewById(R.id.textViewSingleOfferList);
         myOfferTextView.setText(address + ' ' + description + ' ' + animals + ' ' + medication + ' ' + shopping + ' ' + medication);
         layoutList.addView(myOfferView);
+
+        chatBtn = findViewById(R.id.btnChat);
+        chatBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(OfferList.this, ChatActivity.class);
+                intent.putExtra("receiverUid", userid);
+                startActivity(intent);
+            }
+        });
+
     }
 }

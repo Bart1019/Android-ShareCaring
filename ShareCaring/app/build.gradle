@@ -6,13 +6,18 @@ android {
 
     defaultConfig {
         applicationId "com.example.myapplication"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     buildTypes {
@@ -48,7 +53,10 @@ dependencies {
     //circular imageview
     implementation 'com.mikhaellopez:circularimageview:4.2.0'
     implementation 'com.squareup.picasso:picasso:2.5.0'
-
     implementation 'com.android.support:multidex:1.0.3'
+
+    //chat
+    implementation 'com.cometchat:pro-android-chat-sdk:2.1.6'
+    implementation 'com.github.stfalcon:chatkit:0.3.3'
 }
 apply plugin: 'com.google.gms.google-services'
