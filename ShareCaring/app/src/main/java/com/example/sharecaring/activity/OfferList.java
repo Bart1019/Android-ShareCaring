@@ -18,7 +18,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class OfferList extends AppCompatActivity implements View.OnClickListener {
+public class OfferList extends AppCompatActivity {
 
     DatabaseReference ref;
     FirebaseUser user;
@@ -33,16 +33,7 @@ public class OfferList extends AppCompatActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offer_list);
         layoutList = findViewById(R.id.layout_list);
-        chatBtn = findViewById(R.id.btnChat);
-        chatBtn.setOnClickListener(this);
         getOfferList();
-    }
-
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.btnChat) {
-
-        }
     }
 
     private void getOfferList() {
