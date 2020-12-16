@@ -59,10 +59,8 @@ public class MyOffersActivity extends AppCompatActivity {
         ref.child(userid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
                 for (DataSnapshot postSnapshot: snapshot.getChildren()) {
                     offerId = postSnapshot.getKey();
-                    System.out.println(offerId);
                     address = postSnapshot.child("address").getValue().toString();
                     description = postSnapshot.child("description").getValue().toString();
                     animals = postSnapshot.child("animals").getValue().toString();
@@ -92,14 +90,16 @@ public class MyOffersActivity extends AppCompatActivity {
             }
         });
 
+        myOfferView.setTag(offerId);
         layoutList.addView(myOfferView);
     }
 
     private void removeView(View view) {
         layoutList.removeView(view);
-        //String userId = user.getUid();
-        //ref = FirebaseDatabase.getInstance().getReference("Offers/"+ userId).child(offerId);
-        //ref.removeValue();
+        offerId = view.getTag().toString();
+        String userId = user.getUid();
+        ref = FirebaseDatabase.getInstance().getReference("Offers/"+ userId).child(offerId);
+        ref.removeValue();
     }
 
 }
