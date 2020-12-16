@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -22,7 +23,8 @@ public class OfferList extends AppCompatActivity {
     DatabaseReference ref;
     FirebaseUser user;
     FirebaseAuth mAuth;
-    String description, address, medication, animals, shopping, transport;
+    String description, address, medication, animals, shopping, transport,offerId;
+    Button btnAccept;
     LinearLayout layoutList;
 
     @Override
@@ -44,13 +46,14 @@ public class OfferList extends AppCompatActivity {
                     for(DataSnapshot userIdDb : snapshot.getChildren()) {
                         System.out.println(userIdDb.getKey());
                         if(!userIdDb.getKey().equals(userid))
-                            for(DataSnapshot offerId : userIdDb.getChildren()) {
-                                address = offerId.child("address").getValue().toString();
-                                description = offerId.child("description").getValue().toString();
-                                animals = offerId.child("animals").getValue().toString();
-                                medication = offerId.child("medication").getValue().toString();
-                                shopping = offerId.child("shopping").getValue().toString();
-                                transport = offerId.child("transport").getValue().toString();
+                            for(DataSnapshot offerIdDb : userIdDb.getChildren()) {
+                                offerId = offerIdDb.getKey();
+                                address = offerIdDb.child("address").getValue().toString();
+                                description = offerIdDb.child("description").getValue().toString();
+                                animals = offerIdDb.child("animals").getValue().toString();
+                                medication = offerIdDb.child("medication").getValue().toString();
+                                shopping = offerIdDb.child("shopping").getValue().toString();
+                                transport = offerIdDb.child("transport").getValue().toString();
                                 putDataToTextView();
                             }
                     }
@@ -67,6 +70,19 @@ public class OfferList extends AppCompatActivity {
         final View myOfferView = getLayoutInflater().inflate(R.layout.alloffers, null, false);
         TextView myOfferTextView = (TextView)myOfferView.findViewById(R.id.textViewSingleOfferList);
         myOfferTextView.setText(address + ' ' + description + ' ' + animals + ' ' + medication + ' ' + shopping + ' ' + medication);
+
+        btnAccept = (Button)myOfferView.findViewById(R.id.btnAccept);
+        btnAccept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                acceptOffer(myOfferView);
+            }
+        });
+        myOfferView.setTag(offerId);
         layoutList.addView(myOfferView);
+    }
+
+    private void acceptOffer(View view) {
+        layoutList.removeView(view);
     }
 }
