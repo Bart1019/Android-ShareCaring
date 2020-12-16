@@ -107,8 +107,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 IntentOpener.openIntent(ProfileActivity.this, EditProfileActivity.class);
                 break;
         }
-
-
-
     }
 }
+
