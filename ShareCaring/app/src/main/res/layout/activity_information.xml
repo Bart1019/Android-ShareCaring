@@ -8,10 +8,11 @@
 
     <TextView
         android:id="@+id/textViewInfo"
-        android:layout_width="184dp"
-        android:layout_height="186dp"
+        android:layout_width="253dp"
+        android:layout_height="297dp"
         android:layout_marginTop="104dp"
-        android:text="Hello we are sharingcare"
+        android:text="@string/information"
+        android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
