@@ -80,7 +80,7 @@ public class MyOffersActivity extends AppCompatActivity {
     private void putDataToTextView() {
         final View myOfferView = getLayoutInflater().inflate(R.layout.offer, null, false);
         TextView myOfferTextView = (TextView)myOfferView.findViewById(R.id.textViewSingleOffer);
-        myOfferTextView.setText(address +'\n' +description);
+        myOfferTextView.setText(address +"\n" +description);
 
         imageClose = (ImageView)myOfferView.findViewById(R.id.imageClose);
         imageClose.setOnClickListener(new View.OnClickListener() {

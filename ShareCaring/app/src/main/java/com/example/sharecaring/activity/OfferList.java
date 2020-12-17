@@ -78,7 +78,7 @@ public class OfferList extends AppCompatActivity {
     private void putDataToTextView() {
         final View myOfferView = getLayoutInflater().inflate(R.layout.alloffers, null, false);
         TextView myOfferTextView = (TextView)myOfferView.findViewById(R.id.textViewSingleOfferList);
-        myOfferTextView.setText(address + ' ' + description);
+        myOfferTextView.setText(address + "\n" + description);
 
         if(animals.equals("true")) {
             ImageView imageAnimals = (ImageView)myOfferView.findViewById(R.id.imageAnimals);
