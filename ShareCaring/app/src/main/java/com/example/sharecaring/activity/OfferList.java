@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -13,12 +14,9 @@ import android.widget.Toast;
 
 import com.example.sharecaring.R;
 import com.example.sharecaring.model.IntentOpener;
-<<<<<<< HEAD
 import com.example.sharecaring.model.Offer;
-=======
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
->>>>>>> main
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,7 +31,7 @@ public class OfferList extends AppCompatActivity {
     FirebaseUser user;
     FirebaseAuth mAuth;
 
-    String description, address, medication, animals, shopping, transport,offerId;
+    String description, address, medication, animals, shopping, transport,offerId, receiverID;
     Boolean isAccepted;
     Button btnAccept;
     LinearLayout layoutList;
@@ -57,6 +55,7 @@ public class OfferList extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for(DataSnapshot userIdDb : snapshot.getChildren()) {
                         System.out.println(userIdDb.getKey());
+                        Log.d("OffersList",userIdDb.getKey());
                         if(!userIdDb.getKey().equals(userid))
                             for(DataSnapshot offerIdDb : userIdDb.getChildren()) {
                                 if(offerIdDb.child("isAccepted").getValue().toString().equals("false")) {
@@ -92,18 +91,52 @@ public class OfferList extends AppCompatActivity {
                 acceptOffer(myOfferView);
             }
         });
+
         myOfferView.setTag(offerId);
         layoutList.addView(myOfferView);
 
-        chatBtn = findViewById(R.id.btnChat);
+        chatBtn = (Button) findViewById(R.id.btnChat);
         chatBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(OfferList.this, ChatActivity.class);
+                /*Intent intent = new Intent(OfferList.this, ChatActivity.class);
                 intent.putExtra("receiverUid", user.getUid()); //im getting my id, insted of the offers author id
-                startActivity(intent);
+                startActivity(intent);*/
+                //Toast.makeText(OfferList.this, "nullll", Toast.LENGTH_SHORT).show();
+                chat(myOfferView);
             }
         });
+
+    }
+
+    private void chat(View view) {
+        offerId = view.getTag().toString();
+        initiateChat();
+    }
+
+    private void initiateChat() {
+        ref = FirebaseDatabase.getInstance().getReference("Offers");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot userIdDb : snapshot.getChildren()) {
+                    for(DataSnapshot offerIdDb : userIdDb.getChildren()) {
+                        if(offerIdDb.getKey().equals(offerId)) {
+                            receiverID = userIdDb.getKey();
+                            if (receiverID == null) {
+                                Toast.makeText(OfferList.this, "nullll", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(OfferList.this, receiverID, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
+
 
     }
 

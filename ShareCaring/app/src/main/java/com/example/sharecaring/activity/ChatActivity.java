@@ -70,8 +70,8 @@ public class ChatActivity extends AppCompatActivity {
             }
         };
 
-        /*String senderId = CometChat.getLoggedInUser().getUid();
-        adapter = new MessagesListAdapter<>(senderId, imageLoader);
+        String senderId = CometChat.getLoggedInUser().getUid();
+        /*adapter = new MessagesListAdapter<>(senderId, imageLoader);
         messagesList.setAdapter(adapter);*/
     }
 
