@@ -9,14 +9,16 @@ public class Offer implements Serializable {
     public boolean shopping;
     public boolean medication;
     public boolean transport;
+    public boolean isAccepted;
 
-    public Offer(String description, String address, Boolean animals, Boolean shopping, Boolean medication, Boolean transport) {
+    public Offer(String description, String address, Boolean animals, Boolean shopping, Boolean medication, Boolean transport, Boolean isAccepted) {
         this.description = description;
         this.address = address;
         this.animals = animals;
         this.shopping = shopping;
         this.medication = medication;
         this.transport = transport;
+        this.isAccepted = isAccepted;
     }
 
     public String getDescription() {
