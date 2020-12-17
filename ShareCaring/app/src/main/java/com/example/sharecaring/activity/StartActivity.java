@@ -141,6 +141,11 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                             String fName = str.substring(0, str.indexOf(' '));   //to first space
                             String lName = str.substring(str.indexOf(' ') + 1); //rest
                             writeNewUser(user.getUid(), fName, lName, user.getEmail());
+
+                            //create + login to comet
+                            ChatConfig.createUser(user.getUid(), user.getDisplayName());
+                            ChatConfig.loginToChat(user.getUid());
+
                             updateUI(user, InformationActivity.class);
                         } else {
                             // If sign in fails, display a message to the user.
