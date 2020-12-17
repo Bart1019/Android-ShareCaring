@@ -9,10 +9,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sharecaring.R;
 import com.example.sharecaring.model.IntentOpener;
+<<<<<<< HEAD
 import com.example.sharecaring.model.Offer;
+=======
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+>>>>>>> main
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,6 +34,7 @@ public class OfferList extends AppCompatActivity {
     FirebaseAuth mAuth;
 
     String description, address, medication, animals, shopping, transport,offerId;
+    Boolean isAccepted;
     Button btnAccept;
     LinearLayout layoutList;
     Button chatBtn;
@@ -52,14 +59,16 @@ public class OfferList extends AppCompatActivity {
                         System.out.println(userIdDb.getKey());
                         if(!userIdDb.getKey().equals(userid))
                             for(DataSnapshot offerIdDb : userIdDb.getChildren()) {
-                                offerId = offerIdDb.getKey();
-                                address = offerIdDb.child("address").getValue().toString();
-                                description = offerIdDb.child("description").getValue().toString();
-                                animals = offerIdDb.child("animals").getValue().toString();
-                                medication = offerIdDb.child("medication").getValue().toString();
-                                shopping = offerIdDb.child("shopping").getValue().toString();
-                                transport = offerIdDb.child("transport").getValue().toString();
-                                putDataToTextView();
+                                if(offerIdDb.child("isAccepted").getValue().toString().equals("false")) {
+                                    offerId = offerIdDb.getKey();
+                                    address = offerIdDb.child("address").getValue().toString();
+                                    description = offerIdDb.child("description").getValue().toString();
+                                    animals = offerIdDb.child("animals").getValue().toString();
+                                    medication = offerIdDb.child("medication").getValue().toString();
+                                    shopping = offerIdDb.child("shopping").getValue().toString();
+                                    transport = offerIdDb.child("transport").getValue().toString();
+                                    putDataToTextView();
+                                }
                             }
                     }
             }
@@ -100,5 +109,48 @@ public class OfferList extends AppCompatActivity {
 
     private void acceptOffer(View view) {
         layoutList.removeView(view);
+        offerId = view.getTag().toString();
+
+        markIsAccepted();
+        //String userId = user.getUid();
+        //ref = FirebaseDatabase.getInstance().getReference("Offers/"+ userId + "/" + offerId).child("isAccepted");
+        //ref.setValue(true);
+    }
+
+    private void markIsAccepted() {
+        ref = FirebaseDatabase.getInstance().getReference("Offers");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot userIdDb : snapshot.getChildren()) {
+                        for(DataSnapshot offerIdDb : userIdDb.getChildren()) {
+                            if(offerIdDb.getKey().equals(offerId)) {
+                                DatabaseReference offerRef = offerIdDb.child("isAccepted").getRef();
+                                offerRef.setValue(true);
+
+                                //offerRef = FirebaseDatabase.getInstance().getReference("AcceptedOffers");
+                                FirebaseDatabase.getInstance().getReference("AcceptedOffers")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        //.push() allows to save data without overriding
+                                        .push().setValue(offerId).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()) {
+                                            Toast.makeText(OfferList.this, "Offer has been accepted", Toast.LENGTH_LONG).show();
+                                        }else {
+                                            Toast.makeText(OfferList.this, "Failed to accept offer", Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }

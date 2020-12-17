@@ -62,7 +62,7 @@ public class AddOfferActivity extends AppCompatActivity {
         final String description = editTextDescription.getText().toString().trim();
         final String address = editTextAddress.getText().toString().trim();
 
-        Offer offer = new Offer(description, address, animals, shopping, medication, transport);
+        Offer offer = new Offer(description, address, animals, shopping, medication, transport, false);
         FirebaseDatabase.getInstance().getReference("Offers")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 //.push() allows to save data without overriding
