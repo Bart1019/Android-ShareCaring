@@ -6,12 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".activity.RegisterActivity">
 
+    <ImageView
+        android:id="@+id/imageSplash"
+        android:layout_width="800dp"
+        android:layout_height="400dp"
+        android:layout_marginStart="-30dp"
+        android:layout_marginLeft="-30dp"
+        android:layout_marginBottom="340dp"
+        android:contentDescription="@string/content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/splash_register" />
+
     <EditText
         android:id="@+id/editTextFirstName"
         android:layout_width="229dp"
         android:layout_height="53dp"
         android:layout_marginTop="156dp"
-        android:hint="First Name"
+        android:autofillHints=""
+        android:hint="@string/hint_fname"
+        android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -21,7 +35,9 @@
         android:layout_width="229dp"
         android:layout_height="53dp"
         android:layout_marginTop="244dp"
-        android:hint="Last name"
+        android:autofillHints=""
+        android:hint="@string/hint_lname"
+        android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -31,7 +47,9 @@
         android:layout_width="229dp"
         android:layout_height="53dp"
         android:layout_marginTop="336dp"
-        android:hint="E-mail"
+        android:autofillHints=""
+        android:hint="@string/hint_email"
+        android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -41,19 +59,26 @@
         android:layout_width="229dp"
         android:layout_height="53dp"
         android:layout_marginTop="424dp"
-        android:hint="Password"
+        android:hint="@string/hint_pass"
+        android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:autofillHints="" />
 
     <Button
         android:id="@+id/btnRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="116dp"
-        android:text="Register "
+        android:background="@drawable/rounded_button_colored"
+        android:text="@string/register_btn"
+        android:textColor="@color/background"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextPassword"
+        app:layout_constraintVertical_bias="0.011" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
