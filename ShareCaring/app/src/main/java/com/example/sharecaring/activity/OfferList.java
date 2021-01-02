@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -82,7 +83,27 @@ public class OfferList extends AppCompatActivity {
     private void putDataToTextView() {
         final View myOfferView = getLayoutInflater().inflate(R.layout.alloffers, null, false);
         TextView myOfferTextView = (TextView)myOfferView.findViewById(R.id.textViewSingleOfferList);
-        myOfferTextView.setText(address + ' ' + description + ' ' + animals + ' ' + medication + ' ' + shopping + ' ' + medication);
+        myOfferTextView.setText(address + "\n" + description);
+
+        if(animals.equals("true")) {
+            ImageView imageAnimals = (ImageView)myOfferView.findViewById(R.id.imageAnimals);
+            imageAnimals.setImageResource(R.drawable.dog);
+        }
+
+        if(medication.equals("true")) {
+            ImageView imageMedication = (ImageView)myOfferView.findViewById(R.id.imageMedication);
+            imageMedication.setImageResource(R.drawable.medicine);
+        }
+
+        if(transport.equals("true")) {
+            ImageView imageTransport = (ImageView)myOfferView.findViewById(R.id.imageTransport);
+            imageTransport.setImageResource(R.drawable.car);
+        }
+
+        if(shopping.equals("true")) {
+            ImageView imageShopping = (ImageView)myOfferView.findViewById(R.id.imageShopping);
+            imageShopping.setImageResource(R.drawable.groceries);
+        }
 
         btnAccept = (Button)myOfferView.findViewById(R.id.btnAccept);
         btnAccept.setOnClickListener(new View.OnClickListener() {
@@ -92,21 +113,16 @@ public class OfferList extends AppCompatActivity {
             }
         });
 
-        myOfferView.setTag(offerId);
-        layoutList.addView(myOfferView);
-
-        chatBtn = (Button) findViewById(R.id.btnChat);
+        chatBtn = (Button) myOfferView.findViewById(R.id.btnChat);
         chatBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Intent intent = new Intent(OfferList.this, ChatActivity.class);
-                intent.putExtra("receiverUid", user.getUid()); //im getting my id, insted of the offers author id
-                startActivity(intent);*/
-                //Toast.makeText(OfferList.this, "nullll", Toast.LENGTH_SHORT).show();
                 chat(myOfferView);
             }
         });
 
+        myOfferView.setTag(offerId);
+        layoutList.addView(myOfferView);
     }
 
     private void chat(View view) {
@@ -123,11 +139,14 @@ public class OfferList extends AppCompatActivity {
                     for(DataSnapshot offerIdDb : userIdDb.getChildren()) {
                         if(offerIdDb.getKey().equals(offerId)) {
                             receiverID = userIdDb.getKey();
-                            if (receiverID == null) {
+                            Intent intent = new Intent(OfferList.this, ChatActivity.class);
+                            intent.putExtra("receiverUid", receiverID);  //detect the offer author and pass to chat activity
+                            startActivity(intent);
+                            /*if (receiverID == null) {
                                 Toast.makeText(OfferList.this, "nullll", Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(OfferList.this, receiverID, Toast.LENGTH_SHORT).show();
-                            }
+                            }*/
                         }
                     }
                 }
@@ -143,11 +162,10 @@ public class OfferList extends AppCompatActivity {
     private void acceptOffer(View view) {
         layoutList.removeView(view);
         offerId = view.getTag().toString();
-
         markIsAccepted();
-        //String userId = user.getUid();
-        //ref = FirebaseDatabase.getInstance().getReference("Offers/"+ userId + "/" + offerId).child("isAccepted");
-        //ref.setValue(true);
+        String userId = user.getUid();
+        ref = FirebaseDatabase.getInstance().getReference("Offers/"+ userId + "/" + offerId).child("isAccepted");
+        ref.setValue(true);
     }
 
     private void markIsAccepted() {

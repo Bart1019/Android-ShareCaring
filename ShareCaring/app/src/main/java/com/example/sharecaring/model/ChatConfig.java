@@ -1,6 +1,7 @@
 package com.example.sharecaring.model;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.cometchat.pro.core.AppSettings;
 import com.cometchat.pro.core.CometChat;
@@ -8,6 +9,7 @@ import com.cometchat.pro.exceptions.CometChatException;
 import com.cometchat.pro.models.User;
 
 public class ChatConfig {
+    private static final String TAG = ChatConfig.class.getName();
     private static final String APP_ID = "27297bcc6d53412";
     private static final String API_KEY = "3c022a14c1229184e2b757e57962f87a21eb0570";
     private static final String REGION = "eu";
@@ -31,10 +33,14 @@ public class ChatConfig {
 
         CometChat.createUser(user, API_KEY, new CometChat.CallbackListener<User>() {
             @Override
-            public void onSuccess(User user) {}
+            public void onSuccess(User user) {
+                Log.d(TAG, "Initialization completed successfully");
+            }
 
             @Override
-            public void onError(CometChatException e) {}
+            public void onError(CometChatException e) {
+                Log.d(TAG, "Initialization failed");
+            }
         });
     }
 

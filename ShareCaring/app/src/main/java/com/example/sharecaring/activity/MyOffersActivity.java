@@ -80,7 +80,7 @@ public class MyOffersActivity extends AppCompatActivity {
     private void putDataToTextView() {
         final View myOfferView = getLayoutInflater().inflate(R.layout.offer, null, false);
         TextView myOfferTextView = (TextView)myOfferView.findViewById(R.id.textViewSingleOffer);
-        myOfferTextView.setText(address + ' ' + description + ' ' + animals + ' ' + medication + ' ' + shopping + ' ' + medication);
+        myOfferTextView.setText(address +"\n" +description);
 
         imageClose = (ImageView)myOfferView.findViewById(R.id.imageClose);
         imageClose.setOnClickListener(new View.OnClickListener() {
@@ -89,6 +89,27 @@ public class MyOffersActivity extends AppCompatActivity {
                 removeView(myOfferView);
             }
         });
+
+        if(animals.equals("true")) {
+            ImageView imageAnimals = (ImageView)myOfferView.findViewById(R.id.imageAnimals);
+            imageAnimals.setImageResource(R.drawable.dog);
+        }
+
+        if(medication.equals("true")) {
+            ImageView imageMedication = (ImageView)myOfferView.findViewById(R.id.imageMedication);
+            imageMedication.setImageResource(R.drawable.medicine);
+        }
+
+        if(transport.equals("true")) {
+            ImageView imageTransport = (ImageView)myOfferView.findViewById(R.id.imageTransport);
+            imageTransport.setImageResource(R.drawable.car);
+        }
+
+        if(shopping.equals("true")) {
+            ImageView imageShopping = (ImageView)myOfferView.findViewById(R.id.imageShopping);
+            imageShopping.setImageResource(R.drawable.groceries);
+        }
+
 
         myOfferView.setTag(offerId);
         layoutList.addView(myOfferView);

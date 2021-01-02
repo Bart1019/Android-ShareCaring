@@ -47,7 +47,7 @@ public class ChatActivity extends AppCompatActivity {
 
         init();
         addNewMessageListener();
-        //fetchPreviousMessages();
+        fetchPreviousMessages();
     }
 
     private void init() {
@@ -71,8 +71,8 @@ public class ChatActivity extends AppCompatActivity {
         };
 
         String senderId = CometChat.getLoggedInUser().getUid();
-        /*adapter = new MessagesListAdapter<>(senderId, imageLoader);
-        messagesList.setAdapter(adapter);*/
+        adapter = new MessagesListAdapter<>(senderId, imageLoader);
+        messagesList.setAdapter(adapter);
     }
 
     private void sendMessage(String message) {
