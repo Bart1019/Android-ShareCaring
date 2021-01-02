@@ -2,7 +2,7 @@
     <string name="app_name">My Application</string>
     <string name="facebook_app_id">3097323387035781</string>
     <string name="fb_login_protocol_scheme">fb3097323387035781</string>
-
+    <!-- start screen -->
     <string name="app_name1">Share</string>
     <string name="app_name2">Caring</string>
     <string name="google_btn">Sign in with Google</string>
@@ -12,13 +12,18 @@
     <string name="log_in"><u>Log in</u></string>
     <string name="content">image content</string>
     <string name="options">OTHER OPTIONS</string>
+    <!-- info activity -->
+    <string name="information">info</string>
+    <string name="got_it">Got it!</string>
+    <string name="heading">heading</string>
+
     <string name="toast_fb_firebase">Please sign in to continue</string>
     <string name="title_activity_maps">Map</string>
-    <string name="got_it">Got it</string>
+
     <string name="log_out">LOG OUT</string>
     <string name="toast_auth">Authentication failed, the email is already registered with different provider</string>
     <string name="edit_prof">Edit profile</string>
     <string name="upload_profile_pic">Upload photo</string>
     <string name="finish_edit">Done</string>
-    <string name="information">Hello, we are ShareCaring! \n\nWe are a group of passionate young individuals who wish to support local communities during these awful times. \n\nWe want to connect people who are under quarantine with those, who would be willing to provide them aid.</string>
+
 </resources>
