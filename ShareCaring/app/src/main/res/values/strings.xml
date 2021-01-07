@@ -23,6 +23,11 @@
     <string name="hint_pass">Password</string>
     <string name="hint_fname">First Name</string>
     <string name="hint_lname">Last Name</string>
+    <!-- bottom nav menu -->
+    <string name="item_map">Map</string>
+    <string name="item_profile">Profile</string>
+    <string name="item_settings">Settings</string>
+    <string name="item_chat">Chat</string>
 
 
     <string name="toast_fb_firebase">Please sign in to continue</string>

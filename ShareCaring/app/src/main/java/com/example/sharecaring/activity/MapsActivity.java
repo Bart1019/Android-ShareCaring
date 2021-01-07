@@ -7,11 +7,13 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -29,6 +31,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -50,15 +54,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     List<Address> addressList = new ArrayList<>();
     LatLng addressLatLng;
 
+    BottomNavigationView bottomNavigationView;
+    FloatingActionButton fabBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        Button buttonProfile = (Button)findViewById(R.id.btnProfile);
-        buttonProfile.setOnClickListener(this);
-        Button buttonOffersList = (Button)findViewById(R.id.btnOfferList);
-        buttonOffersList.setOnClickListener(this);
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setBackgroundColor(Color.TRANSPARENT);
+        bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
+        fabBtn = findViewById(R.id.fab);
+        fabBtn.setOnClickListener(this);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -67,15 +75,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-
     @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.btnProfile) {
-            IntentOpener.openIntent(MapsActivity.this, ProfileActivity.class);
-        } else if(v.getId() == R.id.btnOfferList) {
-            IntentOpener.openIntent(MapsActivity.this, OfferList.class);
+    public void onClick(View view) {
+        if (view.getId() == R.id.fab) {
+            IntentOpener.openIntent(MapsActivity.this, AddOfferActivity.class);
         }
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener =
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.map:
+                            IntentOpener.openIntent(MapsActivity.this, MapsActivity.class);
+                            break;
+                        case R.id.profile:
+                            IntentOpener.openIntent(MapsActivity.this, ProfileActivity.class);
+                            break;
+                        case R.id.chat:
+                            break;
+                        case R.id.notifications:
+                            break;
+                    }
+
+                    return false;
+                }
+            };
 
     /**
      * Manipulates the map once available.
@@ -167,5 +193,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
-
 }
