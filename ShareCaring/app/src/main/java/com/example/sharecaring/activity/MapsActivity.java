@@ -96,6 +96,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         case R.id.chat:
                             break;
                         case R.id.notifications:
+                            IntentOpener.openIntent(MapsActivity.this, NotificationActivity.class);
                             break;
                     }
 
