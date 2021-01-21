@@ -81,8 +81,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                             IntentOpener.openIntent(ProfileActivity.this, ProfileActivity.class);
                             break;
                         case R.id.chat:
+                            IntentOpener.openIntent(ProfileActivity.this, OfferList.class);
                             break;
                         case R.id.notifications:
+                            IntentOpener.openIntent(ProfileActivity.this, NotificationActivity.class);
                             break;
                     }
 

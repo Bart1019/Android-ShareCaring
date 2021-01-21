@@ -66,8 +66,10 @@ public class AddOfferActivity extends AppCompatActivity {
                             IntentOpener.openIntent(AddOfferActivity.this, ProfileActivity.class);
                             break;
                         case R.id.chat:
+                            IntentOpener.openIntent(AddOfferActivity.this, OfferList.class);
                             break;
                         case R.id.notifications:
+                            IntentOpener.openIntent(AddOfferActivity.this, NotificationActivity.class);
                             break;
                         case R.id.fab:
                             break;
