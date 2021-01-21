@@ -3,7 +3,9 @@ package com.example.sharecaring.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -15,6 +17,8 @@ import com.example.sharecaring.model.IntentOpener;
 import com.example.sharecaring.model.Offer;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -25,11 +29,15 @@ public class AddOfferActivity extends AppCompatActivity {
     private EditText editTextAddress, editTextDescription;
     private Button btnAddNewOffer;
     DatabaseReference ref;
+    BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_offer);
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setBackgroundColor(Color.TRANSPARENT);
+        bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
         checkBoxAnimals = (CheckBox)findViewById(R.id.checkBoxAnimals);
         checkBoxShopping = (CheckBox)findViewById(R.id.checkBoxFoodShopping);
         checkBoxMedication = (CheckBox)findViewById(R.id.checkBoxMedication);
@@ -45,6 +53,29 @@ public class AddOfferActivity extends AppCompatActivity {
             }
         });
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener =
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.map:
+                            IntentOpener.openIntent(AddOfferActivity.this, MapsActivity.class);
+                            break;
+                        case R.id.profile:
+                            IntentOpener.openIntent(AddOfferActivity.this, ProfileActivity.class);
+                            break;
+                        case R.id.chat:
+                            break;
+                        case R.id.notifications:
+                            break;
+                        case R.id.fab:
+                            break;
+                    }
+
+                    return false;
+                }
+            };
 
     private void addNewOffer() {
         boolean animals = checkBoxAnimals.isChecked();
@@ -78,5 +109,4 @@ public class AddOfferActivity extends AppCompatActivity {
             }
         });
     }
-
 }

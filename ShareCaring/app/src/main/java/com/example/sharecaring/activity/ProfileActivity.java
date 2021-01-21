@@ -3,8 +3,10 @@ package com.example.sharecaring.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,6 +14,8 @@ import android.widget.EditText;
 import com.example.sharecaring.R;
 import com.example.sharecaring.model.IntentOpener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -34,11 +38,19 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     String firstNameFromDB, lastNameFromDB, emailFromDB;
     CircularImageView profilePic;
     StorageReference storageReference;
+    BottomNavigationView bottomNavigationView;
+    FloatingActionButton fabBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setBackgroundColor(Color.TRANSPARENT);
+        bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
+        fabBtn = findViewById(R.id.fab);
+        fabBtn.setOnClickListener(this);
+
 
         //initialize Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -56,6 +68,27 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         profilePic = findViewById(R.id.profileImg);
         loadData();
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener =
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.map:
+                            IntentOpener.openIntent(ProfileActivity.this, MapsActivity.class);
+                            break;
+                        case R.id.profile:
+                            IntentOpener.openIntent(ProfileActivity.this, ProfileActivity.class);
+                            break;
+                        case R.id.chat:
+                            break;
+                        case R.id.notifications:
+                            break;
+                    }
+
+                    return false;
+                }
+            };
 
    private void loadData() {
         String userid = user.getUid();
@@ -105,6 +138,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.editBtn:
                 IntentOpener.openIntent(ProfileActivity.this, EditProfileActivity.class);
+                break;
+            case R.id.fab:
                 break;
         }
     }
