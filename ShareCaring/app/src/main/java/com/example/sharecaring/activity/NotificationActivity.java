@@ -22,11 +22,12 @@ import java.util.ArrayList;
 public class NotificationActivity extends AppCompatActivity {
 
     ArrayList<String> myOffersId = new ArrayList<>();
-    DatabaseReference ref, userRef;
+    DatabaseReference ref;
     FirebaseUser user;
     FirebaseAuth mAuth;
     String offerId, userThatAccepted, nameOfUser;
     LinearLayout layoutList;
+    ArrayList<String> usersThatAccepted = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +38,7 @@ public class NotificationActivity extends AppCompatActivity {
         layoutList = findViewById(R.id.layout_list);
         getMyOffersId();
         getAcceptedOffers();
+
     }
 
     private void getMyOffersId() {
@@ -55,6 +57,7 @@ public class NotificationActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {}
         });
+
     }
 
     private void getAcceptedOffers() {
@@ -71,6 +74,7 @@ public class NotificationActivity extends AppCompatActivity {
                                     System.out.println("elooooooss");
                                     userThatAccepted = userIdDb.getKey();
                                     System.out.println(userThatAccepted);
+                                    usersThatAccepted.add(userThatAccepted);
                                     createNotification();
                                 }
                             }
@@ -87,26 +91,26 @@ public class NotificationActivity extends AppCompatActivity {
 
 
     private void createNotification() {
-        final View myNotificationView = getLayoutInflater().inflate(R.layout.notification, null, false);
-        TextView myNotificationTextView = (TextView)myNotificationView.findViewById(R.id.textViewSingleNotification);
-        getNameOfUser();
-        System.out.println("name of user outside: " + nameOfUser);
-        myNotificationTextView.setText(nameOfUser + " accepted your offer");
+            final View myNotificationView = getLayoutInflater().inflate(R.layout.notification, null, false);
+            TextView myNotificationTextView = (TextView)myNotificationView.findViewById(R.id.textViewSingleNotification);
+            //getNameOfUser();
+            System.out.println("name of user outside: " + userThatAccepted);
+            myNotificationTextView.setText(userThatAccepted + " accepted your offer");
 
-        layoutList.addView(myNotificationView);
+            layoutList.addView(myNotificationView);
+
     }
 
     private void getNameOfUser() {
         //userRef = FirebaseDatabase.getInstance().getReference("Users");
         //userRef.child(userThatAccepted).g
-        userRef = FirebaseDatabase.getInstance().getReference("Users");
-        userRef.child(userThatAccepted).addListenerForSingleValueEvent(new ValueEventListener() {
+        ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(userThatAccepted).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()) {
                     nameOfUser = snapshot.child("firstName").getValue().toString();
                     System.out.println(nameOfUser);
-                }
+
             }
 
             @Override

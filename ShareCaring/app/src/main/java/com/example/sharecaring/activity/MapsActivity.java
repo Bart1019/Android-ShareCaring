@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
@@ -94,6 +95,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             IntentOpener.openIntent(MapsActivity.this, ProfileActivity.class);
                             break;
                         case R.id.chat:
+                            IntentOpener.openIntent(MapsActivity.this, OfferList.class);
                             break;
                         case R.id.notifications:
                             IntentOpener.openIntent(MapsActivity.this, NotificationActivity.class);
