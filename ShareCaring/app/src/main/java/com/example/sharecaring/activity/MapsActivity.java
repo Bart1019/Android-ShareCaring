@@ -93,7 +93,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                             break;
                     }
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
-                    return false;
+                    return true;
                 }
             };
 }
