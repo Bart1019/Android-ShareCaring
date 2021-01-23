@@ -63,7 +63,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
         fabBtn = findViewById(R.id.fab);
         fabBtn.setOnClickListener(this);
-        bottomNavigationView.setSelectedItemId(R.id.map);
+        bottomNavigationView.setSelectedItemId(R.id.profile);
     }
 
     @Override

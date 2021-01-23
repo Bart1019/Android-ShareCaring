@@ -10,11 +10,12 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.sharecaring.R;
+import com.example.sharecaring.model.GeocodingLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,20 +35,29 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static androidx.core.content.ContextCompat.getSystemService;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private static final String TAG = "MapsActivity";
     private static final int PERMISSIONS_REQUEST_ENABLE_GPS = 9002;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 9003;
+    private static final String TAG_RESULTS = "results";
+    private static final String TAG_GEOMETRY = "geometry";
+    private static final String TAG_LOCATION = "location";
+    private static final String TAG_LAT = "lat";
+    private static final String TAG_LNG = "lng";
+    private String url = "https://maps.googleapis.com/maps/api/geocode/json?address=";
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -55,7 +66,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     DatabaseReference ref;
     Geocoder geocoder;
     List<Address> addressList = new ArrayList<>();
-    LatLng addressLatLng;
+    //LatLng addressLatLng;
+    String addressLatLng;
+
+    List<String> addresses = new ArrayList<>();
+    //ArrayList<HashMap<String, String>> addressList = new ArrayList<HashMap<String, String>>();
+    JSONArray results;
+    double lat;
+    double lng;
 
     @Nullable
     @Override
@@ -121,7 +139,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
-            getCurrentLocation();
         } else {
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
@@ -172,14 +189,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         getCurrentLocation();
-        //geocoder = new Geocoder(MapsActivity.this);
-        //getAddresses();
+        geocoder = new Geocoder(getContext());
+        Log.d(TAG, "onMapReady: " + geocoder.isPresent());
+        getAddresses();
     }
 
     private void getCurrentLocation() {
         //We have the permission
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -195,29 +212,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
-    /*private void getAddresses() {
-        /*ref = FirebaseDatabase.getInstance().getReference("Offers");
+    private void getAddresses() {
+        ref = FirebaseDatabase.getInstance().getReference("Offers");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot userId : snapshot.getChildren()) {
                     for(DataSnapshot offerId : userId.getChildren()) {
                         String addressFromDb = offerId.child("address").getValue().toString();
-                        try {
-                            addressList = geocoder.getFromLocationName(addressFromDb,1);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            //Log.e(TAG, "getAddresses: IOException: " + e.getMessage());
-                        }
-
-                        if(addressList.size() > 0) {
-                            Address address = addressList.get(0);
-                            addressLatLng = new LatLng(address.getLatitude(), address.getLongitude());
-                            mMap.addMarker(new MarkerOptions()
-                                .position(addressLatLng)
-                                .title(offerId.child("description").getValue().toString())
-                            );
-                        }
+                        GeocodingLocation locationAddress = new GeocodingLocation();
+                        locationAddress.getAddressFromLocation(addressFromDb,
+                                getContext(), new GeocoderHandler());
+                        //description ?
                     }
                 }
             }
@@ -227,6 +233,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
             }
         });
-        */
-    //}
+    }
+
+    private class GeocoderHandler extends Handler {
+        @Override
+        public void handleMessage(Message message) {
+            String locationAddress;
+            switch (message.what) {
+                case 1:
+                    Bundle bundle = message.getData();
+                    locationAddress = bundle.getString("address");
+                    break;
+                default:
+                    locationAddress = null;
+            }
+            addressLatLng = locationAddress;
+            String[] splitStr = addressLatLng.trim().split("\\s+");
+            LatLng address = new LatLng(Double.parseDouble(splitStr[0]), Double.parseDouble(splitStr[1]));
+            mMap.addMarker(new MarkerOptions()
+                    .position(address).title("lala"));
+        }
+    }
 }
