@@ -16,6 +16,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +36,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -65,15 +69,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     DatabaseReference ref;
     Geocoder geocoder;
-    List<Address> addressList = new ArrayList<>();
-    //LatLng addressLatLng;
     String addressLatLng;
+    Switch aSwitch;
 
     List<String> addresses = new ArrayList<>();
-    //ArrayList<HashMap<String, String>> addressList = new ArrayList<HashMap<String, String>>();
-    JSONArray results;
-    double lat;
-    double lng;
+    List<Marker> markers = new ArrayList<>();
 
     @Nullable
     @Override
@@ -83,6 +83,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
+        // initiate a Switch
+        aSwitch = (Switch) v.findViewById(R.id.switcher);
+        aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {  //on means needs
+                    getAddresses("false");
+                } else {
+                    getAddresses("true");
+                }
+            }
+        });
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
 
         return v;
@@ -191,7 +202,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         getCurrentLocation();
         geocoder = new Geocoder(getContext());
         Log.d(TAG, "onMapReady: " + geocoder.isPresent());
-        getAddresses();
+        getAddresses("true");
     }
 
     private void getCurrentLocation() {
@@ -212,7 +223,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
-    private void getAddresses() {
+    private void getAddresses(final String markerKinds) {
+        truncateMarkers();
         ref = FirebaseDatabase.getInstance().getReference("Offers");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -220,10 +232,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 for(DataSnapshot userId : snapshot.getChildren()) {
                     for(DataSnapshot offerId : userId.getChildren()) {
                         String addressFromDb = offerId.child("address").getValue().toString();
-                        GeocodingLocation locationAddress = new GeocodingLocation();
-                        locationAddress.getAddressFromLocation(addressFromDb,
-                                getContext(), new GeocoderHandler());
-                        //description ?
+                        if (offerId.child("isVolunteering").getValue().toString().equals(markerKinds)) {
+                            GeocodingLocation locationAddress = new GeocodingLocation();
+                            locationAddress.getAddressFromLocation(addressFromDb,
+                                    getContext(), new GeocoderHandler());
+                            //description ?
+                        }
                     }
                 }
             }
@@ -233,6 +247,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
             }
         });
+    }
+
+    private void truncateMarkers() {
+        for (Marker marker : markers) {
+            marker.remove();
+        }
+        markers.clear();
+        Log.d(TAG, "drawMarkers: " + markers.size());
     }
 
     private class GeocoderHandler extends Handler {
@@ -248,10 +270,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     locationAddress = null;
             }
             addressLatLng = locationAddress;
-            String[] splitStr = addressLatLng.trim().split("\\s+");
+            drawMarkers(addressLatLng);
+        }
+
+        private void drawMarkers(String latLng) {
+            String[] splitStr = latLng.trim().split("\\s+");
             LatLng address = new LatLng(Double.parseDouble(splitStr[0]), Double.parseDouble(splitStr[1]));
-            mMap.addMarker(new MarkerOptions()
-                    .position(address).title("lala"));
+            Marker marker = mMap.addMarker(new MarkerOptions().position(address).title("lala"));
+            markers.add(marker);
         }
     }
 }
