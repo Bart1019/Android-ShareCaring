@@ -93,8 +93,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {  //on means needs
+                    truncateMarkers();
                     getAddresses("false");
                 } else {
+                    truncateMarkers();
                     getAddresses("true");
                 }
             }
@@ -229,15 +231,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void getAddresses(final String markerKinds) {
-        truncateMarkers();
         ref = FirebaseDatabase.getInstance().getReference("Offers");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot userId : snapshot.getChildren()) {
+                for (DataSnapshot userId : snapshot.getChildren()) {
                     //String firstName = userId.child("firstName").getValue().toString();
                     String firstName = "me";
-                    for(DataSnapshot offerId : userId.getChildren()) {
+                    for (DataSnapshot offerId : userId.getChildren()) {
                         String addressFromDb = offerId.child("address").getValue().toString();
                         int offerType = 0;
                         List<String> offerTypes = new ArrayList<>();
@@ -281,10 +282,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void truncateMarkers() {
-        /*for (ClusterMarker marker : mClusterMarkers) {
-            marker.remove();
-        }*/
+        for (ClusterMarker marker : mClusterMarkers) {
+            mClusterManager.removeItem(marker);
+        }
         mClusterMarkers.clear();
+        mClusterManager.cluster();
         //Log.d(TAG, "drawMarkers: " + markers.size());
     }
 
@@ -337,56 +339,49 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                             mClusterManager
                     );
                     mClusterManager.setRenderer(mClusterManagerRenderer);
+                }
+                try {
+                    String snippet = description;
+                     /*if(userLocation.getUser().getUser_id().equals(FirebaseAuth.getInstance().getUid())){
+                         snippet = "This is you";
+                     }
+                     else{
+                          snippet = "Determine route to " + userLocation.getUser().getUsername() + "?";
+                     }*/
 
-                    try{
-                        String snippet = firstName;
-                        /*if(userLocation.getUser().getUser_id().equals(FirebaseAuth.getInstance().getUid())){
-                            snippet = "This is you";
-                        }
-                        else{
-                            snippet = "Determine route to " + userLocation.getUser().getUsername() + "?";
-                        }*/
+                    int avatar = R.drawable.care; // set the default avatar
+                    switch (img) {
+                        case CARE:
+                            avatar = R.drawable.care;
+                            break;
+                        case TRANSPORT:
+                            avatar = R.drawable.car;
+                            break;
+                        case MEDICATION:
+                            avatar = R.drawable.medicine;
+                            break;
+                        case ANIMALS:
+                            avatar = R.drawable.dog;
+                            break;
+                        case SHOPPING:
+                            avatar = R.drawable.groceries;
+                            break;
 
-                        int avatar = R.drawable.care; // set the default avatar
-                        switch (img) {
-                            case CARE:
-                                avatar = R.drawable.care;
-                                break;
-                                case TRANSPORT:
-                                avatar = R.drawable.car;
-                                break;
-                                case MEDICATION:
-                                avatar = R.drawable.medicine;
-                                break;
-                                case ANIMALS:
-                                avatar = R.drawable.dog;
-                                break;
-                                case SHOPPING:
-                                avatar = R.drawable.groceries;
-                                break;
-
-                        }
-
-                        ClusterMarker newClusterMarker = new ClusterMarker(
-                                new LatLng(Double.parseDouble(splitStr[0]), Double.parseDouble(splitStr[1])),
-                                firstName,
-                                snippet,
-                                avatar
-                        );
-                        mClusterManager.addItem(newClusterMarker);
-                        mClusterMarkers.add(newClusterMarker);
-
-                    }catch (NullPointerException e){
-                        Log.e(TAG, "addMapMarkers: NullPointerException: " + e.getMessage() );
                     }
 
+                    ClusterMarker newClusterMarker = new ClusterMarker(
+                            new LatLng(Double.parseDouble(splitStr[0]), Double.parseDouble(splitStr[1])),
+                            firstName,
+                            snippet,
+                            avatar
+                    );
+                    mClusterManager.addItem(newClusterMarker);
+                    mClusterMarkers.add(newClusterMarker);
+                } catch (NullPointerException e) {
+                    Log.e(TAG, "addMapMarkers: NullPointerException: " + e.getMessage());
                 }
                 mClusterManager.cluster();
-
             }
-
         }
     }
-
-
 }
