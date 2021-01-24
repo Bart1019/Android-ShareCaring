@@ -25,24 +25,21 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class AddOfferActivity extends AppCompatActivity {
 
-    private CheckBox checkBoxAnimals, checkBoxShopping, checkBoxMedication, checkBoxTransport, checkBoxEverything;
+    private CheckBox checkBoxAnimals, checkBoxShopping, checkBoxMedication, checkBoxTransport, checkBoxEverything, checkBoxOfferType;
     private EditText editTextAddress, editTextDescription;
     private Button btnAddNewOffer;
-    DatabaseReference ref;
-    BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_offer);
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setBackgroundColor(Color.TRANSPARENT);
-        bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
+
         checkBoxAnimals = (CheckBox)findViewById(R.id.checkBoxAnimals);
         checkBoxShopping = (CheckBox)findViewById(R.id.checkBoxFoodShopping);
         checkBoxMedication = (CheckBox)findViewById(R.id.checkBoxMedication);
         checkBoxTransport = (CheckBox)findViewById(R.id.checkBoxTransport);
         checkBoxEverything = (CheckBox)findViewById(R.id.checkBoxEverything);
+        checkBoxOfferType = (CheckBox)findViewById(R.id.checkBoxOfferType);
         editTextAddress = (EditText)findViewById(R.id.editTextAddress);
         editTextDescription = (EditText)findViewById(R.id.editTextDescription);
         btnAddNewOffer = (Button)findViewById(R.id.btnAddNewOffer);
@@ -53,31 +50,6 @@ public class AddOfferActivity extends AppCompatActivity {
             }
         });
     }
-
-    private BottomNavigationView.OnNavigationItemSelectedListener navListener =
-            new BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.map:
-                            IntentOpener.openIntent(AddOfferActivity.this, MapsActivity.class);
-                            break;
-                        case R.id.profile:
-                            IntentOpener.openIntent(AddOfferActivity.this, ProfileActivity.class);
-                            break;
-                        case R.id.chat:
-                            IntentOpener.openIntent(AddOfferActivity.this, OfferList.class);
-                            break;
-                        case R.id.notifications:
-                            IntentOpener.openIntent(AddOfferActivity.this, NotificationActivity.class);
-                            break;
-                        case R.id.fab:
-                            break;
-                    }
-
-                    return false;
-                }
-            };
 
     private void addNewOffer() {
         boolean animals = checkBoxAnimals.isChecked();
@@ -95,7 +67,7 @@ public class AddOfferActivity extends AppCompatActivity {
         final String description = editTextDescription.getText().toString().trim();
         final String address = editTextAddress.getText().toString().trim();
 
-        Offer offer = new Offer(description, address, animals, shopping, medication, transport, false);
+        Offer offer = new Offer(description, address, animals, shopping, medication, transport, false, checkBoxOfferType.isChecked());
         FirebaseDatabase.getInstance().getReference("Offers")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 //.push() allows to save data without overriding

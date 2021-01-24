@@ -287,7 +287,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
         mClusterMarkers.clear();
         mClusterManager.cluster();
-        //Log.d(TAG, "drawMarkers: " + markers.size());
     }
 
     private class GeocoderHandler extends Handler {

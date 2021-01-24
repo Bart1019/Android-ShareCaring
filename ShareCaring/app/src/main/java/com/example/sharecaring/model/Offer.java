@@ -10,8 +10,9 @@ public class Offer implements Serializable {
     public boolean medication;
     public boolean transport;
     public boolean isAccepted;
+    public boolean isVolunteering;
 
-    public Offer(String description, String address, Boolean animals, Boolean shopping, Boolean medication, Boolean transport, Boolean isAccepted) {
+    public Offer(String description, String address, Boolean animals, Boolean shopping, Boolean medication, Boolean transport, Boolean isAccepted, Boolean isVolunteering) {
         this.description = description;
         this.address = address;
         this.animals = animals;
@@ -19,6 +20,7 @@ public class Offer implements Serializable {
         this.medication = medication;
         this.transport = transport;
         this.isAccepted = isAccepted;
+        this.isVolunteering = isVolunteering;
     }
 
     public String getDescription() {
