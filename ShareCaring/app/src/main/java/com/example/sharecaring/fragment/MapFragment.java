@@ -28,7 +28,9 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.sharecaring.R;
+import com.example.sharecaring.model.ClusterMarker;
 import com.example.sharecaring.model.GeocodingLocation;
+import com.example.sharecaring.util.MyClusterManagerRenderer;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -45,6 +47,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.maps.android.clustering.ClusterManager;
 
 import org.json.JSONArray;
 
@@ -56,12 +59,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private static final String TAG = "MapsActivity";
     private static final int PERMISSIONS_REQUEST_ENABLE_GPS = 9002;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 9003;
-    private static final String TAG_RESULTS = "results";
-    private static final String TAG_GEOMETRY = "geometry";
-    private static final String TAG_LOCATION = "location";
-    private static final String TAG_LAT = "lat";
-    private static final String TAG_LNG = "lng";
-    private String url = "https://maps.googleapis.com/maps/api/geocode/json?address=";
+    private static final int CARE = -1;
+    private static final int TRANSPORT = 2;
+    private static final int MEDICATION = 1;
+    private static final int ANIMALS = 0;
+    private static final int SHOPPING = 3;
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -74,6 +76,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     List<String> addresses = new ArrayList<>();
     List<Marker> markers = new ArrayList<>();
+    private ClusterManager<ClusterMarker> mClusterManager;
+    private MyClusterManagerRenderer mClusterManagerRenderer;
+    private List<ClusterMarker> mClusterMarkers = new ArrayList<>();
 
     @Nullable
     @Override
@@ -230,13 +235,39 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot userId : snapshot.getChildren()) {
+                    //String firstName = userId.child("firstName").getValue().toString();
+                    String firstName = "me";
                     for(DataSnapshot offerId : userId.getChildren()) {
                         String addressFromDb = offerId.child("address").getValue().toString();
+                        int offerType = 0;
+                        List<String> offerTypes = new ArrayList<>();
+                        offerTypes.add(offerId.child("animals").getValue().toString());
+                        offerTypes.add(offerId.child("medication").getValue().toString());
+                        offerTypes.add(offerId.child("transport").getValue().toString());
+                        offerTypes.add(offerId.child("shopping").getValue().toString());
+
+                        int count = 0;
+                        for (String offer : offerTypes) {
+                            if (offer.equals("true")) {
+                                count++;
+                            }
+                        }
+
+                        if (count > 1) {    //if the offer has multiple types
+                            offerType = CARE;  //care
+                        } else {
+                            for (int i = 0; i < offerTypes.size(); i++) {
+                                if (offerTypes.get(i).equals("true")) {
+                                    offerType = i;
+                                    break;
+                                }
+                            }
+                        }
+
                         if (offerId.child("isVolunteering").getValue().toString().equals(markerKinds)) {
                             GeocodingLocation locationAddress = new GeocodingLocation();
                             locationAddress.getAddressFromLocation(addressFromDb,
-                                    getContext(), new GeocoderHandler());
-                            //description ?
+                                    getContext(), new GeocoderHandler(firstName, offerId.child("description").getValue().toString(), offerType));
                         }
                     }
                 }
@@ -250,14 +281,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void truncateMarkers() {
-        for (Marker marker : markers) {
+        /*for (ClusterMarker marker : mClusterMarkers) {
             marker.remove();
-        }
-        markers.clear();
-        Log.d(TAG, "drawMarkers: " + markers.size());
+        }*/
+        mClusterMarkers.clear();
+        //Log.d(TAG, "drawMarkers: " + markers.size());
     }
 
     private class GeocoderHandler extends Handler {
+        private String description;
+        private String firstName;
+        private int img;
+
+        public GeocoderHandler(String firstName, String description, int img) {
+            this.firstName = firstName;
+            this.description = description;
+            this.img = img;
+        }
+
         @Override
         public void handleMessage(Message message) {
             String locationAddress;
@@ -270,14 +311,82 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     locationAddress = null;
             }
             addressLatLng = locationAddress;
-            drawMarkers(addressLatLng);
+            addMarkers(addressLatLng, description, firstName, img);
         }
 
-        private void drawMarkers(String latLng) {
+        private void drawMarkers(String latLng, String description, int img) {
             String[] splitStr = latLng.trim().split("\\s+");
             LatLng address = new LatLng(Double.parseDouble(splitStr[0]), Double.parseDouble(splitStr[1]));
-            Marker marker = mMap.addMarker(new MarkerOptions().position(address).title("lala"));
+            Marker marker = mMap.addMarker(new MarkerOptions().position(address).title(description));
             markers.add(marker);
+            Log.d(TAG, "drawMarkers: " + markers.size());
+        }
+
+        private void addMarkers(String latLng, String description, String firstName, int img) {
+            if (mMap != null) {
+                String[] splitStr = latLng.trim().split("\\s+");
+
+                if (mClusterManager == null) {
+                    mClusterManager = new ClusterManager<>(getActivity().getApplicationContext(), mMap);
+                }
+
+                if (mClusterManagerRenderer == null) {
+                    mClusterManagerRenderer = new MyClusterManagerRenderer(
+                            getActivity(),
+                            mMap,
+                            mClusterManager
+                    );
+                    mClusterManager.setRenderer(mClusterManagerRenderer);
+
+                    try{
+                        String snippet = firstName;
+                        /*if(userLocation.getUser().getUser_id().equals(FirebaseAuth.getInstance().getUid())){
+                            snippet = "This is you";
+                        }
+                        else{
+                            snippet = "Determine route to " + userLocation.getUser().getUsername() + "?";
+                        }*/
+
+                        int avatar = R.drawable.care; // set the default avatar
+                        switch (img) {
+                            case CARE:
+                                avatar = R.drawable.care;
+                                break;
+                                case TRANSPORT:
+                                avatar = R.drawable.car;
+                                break;
+                                case MEDICATION:
+                                avatar = R.drawable.medicine;
+                                break;
+                                case ANIMALS:
+                                avatar = R.drawable.dog;
+                                break;
+                                case SHOPPING:
+                                avatar = R.drawable.groceries;
+                                break;
+
+                        }
+
+                        ClusterMarker newClusterMarker = new ClusterMarker(
+                                new LatLng(Double.parseDouble(splitStr[0]), Double.parseDouble(splitStr[1])),
+                                firstName,
+                                snippet,
+                                avatar
+                        );
+                        mClusterManager.addItem(newClusterMarker);
+                        mClusterMarkers.add(newClusterMarker);
+
+                    }catch (NullPointerException e){
+                        Log.e(TAG, "addMapMarkers: NullPointerException: " + e.getMessage() );
+                    }
+
+                }
+                mClusterManager.cluster();
+
+            }
+
         }
     }
+
+
 }
