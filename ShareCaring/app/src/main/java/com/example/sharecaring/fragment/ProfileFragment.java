@@ -86,8 +86,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                     emailFromDB = snapshot.child("email").getValue().toString();
                 }
                 editTextFirstName.setText(firstNameFromDB);
+                editTextFirstName.setEnabled(false);
                 editTextLastName.setText(lastNameFromDB);
+                editTextLastName.setEnabled(false);
                 editTextEmail.setText(emailFromDB);
+                editTextEmail.setEnabled(false);
             }
 
             @Override
