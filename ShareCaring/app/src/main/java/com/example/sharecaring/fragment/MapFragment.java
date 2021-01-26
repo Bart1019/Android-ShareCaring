@@ -208,13 +208,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        getCurrentLocation();
+        //getCurrentLocation();
         geocoder = new Geocoder(getContext());
         Log.d(TAG, "onMapReady: " + geocoder.isPresent());
         getAddresses("true");
     }
 
-    private void getCurrentLocation() {
+    /*private void getCurrentLocation() {
         //We have the permission
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -230,19 +230,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 }
             }
         });
-    }
+    }*/
 
     private void getAddresses(final String markerKinds) {
-        //getNamesOfAllUsers();
+        getNamesOfAllUsers();
         ref = FirebaseDatabase.getInstance().getReference("Offers");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot userId : snapshot.getChildren()) {
                     //String firstName = userId.child("firstName").getValue().toString();
-                    String firstName = "me";
+                    //String firstName = "me";
                     //System.out.println(userNames.get(userId.toString()));
-                    //String firstName = userNames.get(userId.toString());
+                    String firstName = userNames.get(userId.getKey());
 
 
                     for (DataSnapshot offerId : userId.getChildren()) {

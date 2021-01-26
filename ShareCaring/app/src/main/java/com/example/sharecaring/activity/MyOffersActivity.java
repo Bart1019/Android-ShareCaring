@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.example.sharecaring.R;
 import com.example.sharecaring.model.IntentOpener;
 import com.example.sharecaring.model.Offer;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -26,7 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class MyOffersActivity extends AppCompatActivity {
 
-    Button btnAddOffer;
+    FloatingActionButton btnAddOffer;
     DatabaseReference ref;
     FirebaseUser user;
     FirebaseAuth mAuth;
@@ -42,7 +43,7 @@ public class MyOffersActivity extends AppCompatActivity {
         user = mAuth.getCurrentUser();
         layoutList = findViewById(R.id.layout_list);
 
-        btnAddOffer = (Button)findViewById(R.id.btnAddOffer);
+        btnAddOffer = (FloatingActionButton) findViewById(R.id.btnFloat);
         btnAddOffer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
