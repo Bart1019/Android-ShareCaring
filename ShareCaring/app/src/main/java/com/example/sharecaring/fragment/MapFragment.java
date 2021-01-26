@@ -52,6 +52,7 @@ import com.google.maps.android.clustering.ClusterManager;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
@@ -79,6 +80,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private ClusterManager<ClusterMarker> mClusterManager;
     private MyClusterManagerRenderer mClusterManagerRenderer;
     private List<ClusterMarker> mClusterMarkers = new ArrayList<>();
+    Hashtable<String, String> userNames = new Hashtable<String, String>();
 
     @Nullable
     @Override
@@ -231,6 +233,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void getAddresses(final String markerKinds) {
+        //getNamesOfAllUsers();
         ref = FirebaseDatabase.getInstance().getReference("Offers");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -238,6 +241,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 for (DataSnapshot userId : snapshot.getChildren()) {
                     //String firstName = userId.child("firstName").getValue().toString();
                     String firstName = "me";
+                    //System.out.println(userNames.get(userId.toString()));
+                    //String firstName = userNames.get(userId.toString());
+
+
                     for (DataSnapshot offerId : userId.getChildren()) {
                         String addressFromDb = offerId.child("address").getValue().toString();
                         int offerType = 0;
@@ -272,6 +279,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                         }
                     }
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+
+    public void getNamesOfAllUsers() {
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users");
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot userId : snapshot.getChildren()) {
+                    if(snapshot.exists()) {
+                        String fn = userId.child("firstName").getValue().toString();
+                        userNames.put(userId.getKey(), fn);
+                    }
+                }
+
+
             }
 
             @Override

@@ -21,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class NotificationsFragment extends Fragment {
 
@@ -28,9 +29,10 @@ public class NotificationsFragment extends Fragment {
     DatabaseReference ref;
     FirebaseUser user;
     FirebaseAuth mAuth;
-    String offerId, userThatAccepted, nameOfUser;
+    String offerId, userThatAccepted;
     LinearLayout layoutList;
     ArrayList<String> usersThatAccepted = new ArrayList<>();
+    Hashtable<String, String> userNames = new Hashtable<String, String>();
 
     @Nullable
     @Override
@@ -40,6 +42,7 @@ public class NotificationsFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         layoutList = v.findViewById(R.id.layout_list);
+        getNamesOfAllUsers();
         getMyOffersId();
         getAcceptedOffers();
         return v;
@@ -75,9 +78,7 @@ public class NotificationsFragment extends Fragment {
                         for(DataSnapshot acceptedOfferIdDb : userIdDb.getChildren()) {
                             for (String myOfferId : myOffersId) {
                                 if(acceptedOfferIdDb.getValue().equals(myOfferId)) {
-                                    System.out.println("elooooooss");
                                     userThatAccepted = userIdDb.getKey();
-                                    System.out.println(userThatAccepted);
                                     usersThatAccepted.add(userThatAccepted);
                                     createNotification();
                                 }
@@ -94,32 +95,35 @@ public class NotificationsFragment extends Fragment {
     }
 
 
-    private void createNotification() {
+    public void createNotification() {
         final View myNotificationView = getLayoutInflater().inflate(R.layout.notification, null, false);
         TextView myNotificationTextView = (TextView)myNotificationView.findViewById(R.id.textViewSingleNotification);
-        //getNameOfUser();
-        System.out.println("name of user outside: " + userThatAccepted);
-        myNotificationTextView.setText(userThatAccepted + " accepted your offer");
+
+        myNotificationTextView.setText(userNames.get(userThatAccepted) + " accepted your offer");
 
         layoutList.addView(myNotificationView);
 
     }
 
-    private void getNameOfUser() {
-        //userRef = FirebaseDatabase.getInstance().getReference("Users");
-        //userRef.child(userThatAccepted).g
-        ref = FirebaseDatabase.getInstance().getReference("Users");
-        ref.child(userThatAccepted).addListenerForSingleValueEvent(new ValueEventListener() {
+    public void getNamesOfAllUsers() {
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users");
+        userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                nameOfUser = snapshot.child("firstName").getValue().toString();
-                System.out.println(nameOfUser);
+                for(DataSnapshot userId : snapshot.getChildren()) {
+                    if(snapshot.exists()) {
+                        String fn = userId.child("firstName").getValue().toString();
+                        userNames.put(userId.getKey(), fn);
+                    }
+                }
+
 
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        });
+            public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
     }
 }
