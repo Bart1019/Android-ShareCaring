@@ -8,6 +8,17 @@
     tools:context=".activity.MyOffersActivity">
 
 
+    <Switch
+        android:id="@+id/switcherMyOffers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:fontFamily="sans-serif-condensed"
+        android:showText="true"
+        android:textOff="Volunteers"
+        android:textOn="Needs" />
+
     <LinearLayout
         android:id="@+id/layout_list"
         android:layout_width="match_parent"
