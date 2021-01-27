@@ -5,8 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,17 +38,34 @@ public class OffersFragment extends Fragment {
     Button btnAccept;
     LinearLayout layoutList;
     Button chatBtn;
+    Switch offersSwitch;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_offers, container, false);
         layoutList = v.findViewById(R.id.layout_list);
-        getOfferList();
+
+        offersSwitch = (Switch) v.findViewById(R.id.volunteersSwitcher);
+
+        offersSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {  //on means needs
+                    layoutList.removeAllViews();
+                    getOfferList("false");
+                } else {
+                    layoutList.removeAllViews();
+                    getOfferList("true");
+                }
+            }
+        });
+
+        offersSwitch.setChecked(false);
+        getOfferList("true");
         return v;
     }
 
-    private void getOfferList() {
+    private void getOfferList(final String offerType) {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         final String userid = user.getUid();
@@ -59,14 +78,16 @@ public class OffersFragment extends Fragment {
                     if(!userIdDb.getKey().equals(userid))
                         for(DataSnapshot offerIdDb : userIdDb.getChildren()) {
                             if(offerIdDb.child("isAccepted").getValue().toString().equals("false")) {
-                                offerId = offerIdDb.getKey();
-                                address = offerIdDb.child("address").getValue().toString();
-                                description = offerIdDb.child("description").getValue().toString();
-                                animals = offerIdDb.child("animals").getValue().toString();
-                                medication = offerIdDb.child("medication").getValue().toString();
-                                shopping = offerIdDb.child("shopping").getValue().toString();
-                                transport = offerIdDb.child("transport").getValue().toString();
-                                putDataToTextView();
+                                if (offerIdDb.child("isVolunteering").getValue().toString().equals(offerType)) {
+                                    offerId = offerIdDb.getKey();
+                                    address = offerIdDb.child("address").getValue().toString();
+                                    description = offerIdDb.child("description").getValue().toString();
+                                    animals = offerIdDb.child("animals").getValue().toString();
+                                    medication = offerIdDb.child("medication").getValue().toString();
+                                    shopping = offerIdDb.child("shopping").getValue().toString();
+                                    transport = offerIdDb.child("transport").getValue().toString();
+                                    putDataToTextView();
+                                }
                             }
                         }
                 }

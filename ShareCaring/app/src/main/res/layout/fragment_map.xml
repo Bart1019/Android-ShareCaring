@@ -16,6 +16,19 @@
         android:layout_height="match_parent">
 
         <Switch
+            android:id="@+id/volunteersSwitcher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:fontFamily="cursive"
+            android:showText="true"
+            android:textOff="Volunteers"
+            android:textOn="Needs"
+            android:thumb="@drawable/thumb1"
+            android:track="@drawable/track" />
+
+        <Switch
             android:id="@+id/mapSwitcher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -25,17 +38,6 @@
             android:layout_marginTop="600dp"/>
     </FrameLayout>
 
-    <Switch
-        android:id="@+id/volunteersSwitcher"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:fontFamily="cursive"
-        android:showText="true"
-        android:textOff="Volunteers"
-        android:textOn="Needs"
-        android:thumb="@drawable/thumb1"
-        android:track="@drawable/track" />
+
 
 </RelativeLayout>

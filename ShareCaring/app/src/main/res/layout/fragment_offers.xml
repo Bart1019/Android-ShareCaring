@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <Switch
+        android:id="@+id/volunteersSwitcher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:fontFamily="cursive"
+        android:showText="true"
+        android:textOff="Volunteers"
+        android:textOn="Needs"
+        android:thumb="@drawable/thumb1"
+        android:track="@drawable/track" />
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,4 +30,4 @@
     </ScrollView>
 
 
-</LinearLayout>
+</RelativeLayout>

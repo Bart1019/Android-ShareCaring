@@ -99,6 +99,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
         // initiate a Switch
         offersSwitch = (Switch) v.findViewById(R.id.volunteersSwitcher);
         mapSwitch = (Switch) v.findViewById(R.id.mapSwitcher);
+        offersSwitch.setChecked(false);
         mapFragment = new MapFragment();
         offersFragment = new OffersFragment();
         mapSwitch.setOnCheckedChangeListener(this);
@@ -130,12 +131,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
         if (b) {
             mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
             mMapFragment.getView().setVisibility(View.INVISIBLE);
+            offersSwitch.setVisibility(View.INVISIBLE);
 
             fm.beginTransaction()
                     .add(R.id.child_fragment_container, offersFragment, LIST_FRAG_TAG)
                     .show(offersFragment)
                     .commit();
         } else {
+            offersSwitch.setVisibility(View.VISIBLE);
             OffersFragment offerHideFragment = (OffersFragment) fm.findFragmentByTag(LIST_FRAG_TAG);
             fm.beginTransaction()
                     .hide(offerHideFragment)
