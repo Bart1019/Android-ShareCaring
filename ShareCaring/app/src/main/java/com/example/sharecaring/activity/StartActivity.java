@@ -97,13 +97,13 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         optionsBtn.setOnClickListener(this);
     }
 
-    /*@Override //if the user is signed in, automatically redirects to maps
+    @Override //if the user is signed in, automatically redirects to maps
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         user = mAuth.getCurrentUser();
         updateUI(user, MapsActivity.class);
-    }*/
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) { //this enables execution of handleFacebook and receives a call back form signInGoogle
@@ -150,7 +150,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                             String str = user.getDisplayName();
                             String fName = str.substring(0, str.indexOf(' '));   //to first space
                             String lName = str.substring(str.indexOf(' ') + 1); //rest
-                            writeNewUser(user.getUid(), fName, lName, user.getEmail(), user.getPhoneNumber());
+                            writeNewUser(user.getUid(), fName, lName, user.getEmail(), "");
                             updateUI(user, InformationActivity.class);
                         } else {
                             // If sign in fails, display a message to the user.

@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,16 +42,16 @@ import com.squareup.picasso.Picasso;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener{
 
-    EditText editTextFirstName, editTextLastName, editTextEmail;
-    Button btnMyOffers, btnLogOut, btnEditProfile;
+    TextView editTextFirstName, editTextEmail;
+    ImageButton btnLogOut, btnEditProfile;
+    Button btnMyOffers;
     DatabaseReference ref;
     FirebaseUser user;
     FirebaseAuth mAuth;
     String firstNameFromDB, lastNameFromDB, emailFromDB;
     CircularImageView profilePic;
     StorageReference storageReference;
-    BottomNavigationView bottomNavigationView;
-    FloatingActionButton fabBtn;
+
 
     @Nullable
     @Override
@@ -60,9 +62,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
 
-        editTextFirstName = (EditText)v.findViewById(R.id.editProfileTextFirstName);
-        editTextLastName = (EditText)v.findViewById(R.id.editProfileTextLastName);
-        editTextEmail = (EditText)v.findViewById(R.id.editProfileTextEmail);
+        editTextFirstName = (TextView) v.findViewById(R.id.editProfileTextFirstName);
+        editTextEmail = (TextView) v.findViewById(R.id.editProfileTextEmail);
         btnMyOffers = (Button)v.findViewById(R.id.btnFinish);
         btnMyOffers.setOnClickListener(this);
         btnLogOut = v.findViewById(R.id.btnLogOut);
@@ -85,12 +86,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                     lastNameFromDB = snapshot.child("lastName").getValue().toString();
                     emailFromDB = snapshot.child("email").getValue().toString();
                 }
-                editTextFirstName.setText(firstNameFromDB);
-                editTextFirstName.setEnabled(false);
-                editTextLastName.setText(lastNameFromDB);
-                editTextLastName.setEnabled(false);
+                String name = firstNameFromDB + " " + lastNameFromDB;
+                editTextFirstName.setText(name);
                 editTextEmail.setText(emailFromDB);
-                editTextEmail.setEnabled(false);
             }
 
             @Override
@@ -125,8 +123,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.editBtn:
                 IntentOpener.openIntent(getActivity(), EditProfileActivity.class);
-                break;
-            case R.id.fab:
                 break;
         }
     }

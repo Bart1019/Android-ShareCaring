@@ -2,14 +2,14 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorMyBue</item>
-        <item name="colorPrimaryDark">@color/colorMyBue</item>
+        <item name="colorPrimary">@color/colorMyGray</item>
+        <item name="colorPrimaryDark">@color/colorMyGray</item>
         <item name="colorAccent">@color/colorMyRed</item>
     </style>
 
     <style name="MaterialAppTheme" parent="Theme.MaterialComponents">
         <!-- Customize your theme here. -->
-        <item name="colorAccent">@color/colorMyBue</item>
+        <item name="colorAccent">@color/colorMyGray</item>
     </style>
 
 </resources>

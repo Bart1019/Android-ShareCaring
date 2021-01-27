@@ -42,6 +42,10 @@
     <string name="edit_prof">Edit profile</string>
     <string name="upload_profile_pic">Upload photo</string>
     <string name="finish_edit">Done</string>
+    <string name="textview">TextView</string>
+    <string name="volunteers">Volunteer</string>
+    <string name="needs">Needs</string>
+    <string name="my_offers">My Offers</string>
 
 
 </resources>

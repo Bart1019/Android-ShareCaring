@@ -33,8 +33,10 @@
                 app:menu="@menu/bottom_nav_menu"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
-                android:backgroundTint="@color/colorMyBue"
-                android:background="@android:color/transparent"/>
+                android:background="@android:color/transparent"
+                app:itemIconTint="@drawable/menu_item"
+                app:itemTextColor="@drawable/menu_item"
+                app:itemBackground="@android:color/transparent"/>
 
         </com.google.android.material.bottomappbar.BottomAppBar>
 
@@ -43,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_baseline_add_24"
-            android:backgroundTint="@color/colorMyPink"
+            android:backgroundTint="@color/colorMyYellow"
             app:layout_anchor="@id/bottomAppBar"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
