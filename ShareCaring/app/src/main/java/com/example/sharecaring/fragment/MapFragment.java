@@ -105,7 +105,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
         mapSwitch.setOnCheckedChangeListener(this);
         fm = getFragmentManager();
 
-        /*aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        offersSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {  //on means needs
                     truncateMarkers();
@@ -115,7 +115,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
                     getAddresses("true");
                 }
             }
-        });*/
+        });
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
 
         return v;
@@ -249,13 +249,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        //getCurrentLocation();
+        getCurrentLocation();
         geocoder = new Geocoder(getContext());
         Log.d(TAG, "onMapReady: " + geocoder.isPresent());
-        //getAddresses("true");
+        getAddresses("true");
     }
 
-    /*private void getCurrentLocation() {
+    private void getCurrentLocation() {
         //We have the permission
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -271,7 +271,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
                 }
             }
         });
-    }*/
+    }
 
     private void getAddresses(final String markerKinds) {
         getNamesOfAllUsers();
