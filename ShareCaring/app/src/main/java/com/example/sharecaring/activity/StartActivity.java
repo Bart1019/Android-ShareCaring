@@ -150,7 +150,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                             String str = user.getDisplayName();
                             String fName = str.substring(0, str.indexOf(' '));   //to first space
                             String lName = str.substring(str.indexOf(' ') + 1); //rest
-                            writeNewUser(user.getUid(), fName, lName, user.getEmail());
+                            writeNewUser(user.getUid(), fName, lName, user.getEmail(), user.getPhoneNumber());
                             updateUI(user, InformationActivity.class);
                         } else {
                             // If sign in fails, display a message to the user.

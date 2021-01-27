@@ -28,8 +28,8 @@ public class DatabaseService {
     DataSnapshot dataSnapshot;
    // public String databaseOut;
 
-    public static void writeNewUser(String userId, String fName, String lName, String email) {
-        User user = new User(fName, lName, email);
+    public static void writeNewUser(String userId, String fName, String lName, String email, String phone) {
+        User user = new User(fName, lName, email, phone);
         FirebaseDatabase.getInstance().getReference("Users").child(userId).setValue(user);
     }
 

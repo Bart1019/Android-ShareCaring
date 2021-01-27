@@ -23,7 +23,10 @@
     <string name="hint_pass">Password</string>
     <string name="hint_fname">First Name</string>
     <string name="hint_lname">Last Name</string>
-    <string name="welcome">Welcome &#13;&#10;Back</string>
+    <string name="welcome">Welcome Back</string>
+    <string name="or">or</string>
+    <string name="create_account">CREATE ACCOUNT</string>
+    <string name="phone_with_country_code">Phone number</string>
     <!-- bottom nav menu -->
     <string name="item_map">Map</string>
     <string name="item_profile">Profile</string>
@@ -39,7 +42,6 @@
     <string name="edit_prof">Edit profile</string>
     <string name="upload_profile_pic">Upload photo</string>
     <string name="finish_edit">Done</string>
-    <string name="or">or</string>
-    <string name="create_account">CREATE ACCOUNT</string>
+
 
 </resources>
