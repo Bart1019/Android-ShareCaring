@@ -2,15 +2,13 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/colorMyBue</item>
+        <item name="colorPrimaryDark">@color/colorMyGray</item>
+        <item name="colorAccent">@color/colorMyRed</item>
     </style>
 
     <style name="MaterialAppTheme" parent="Theme.MaterialComponents">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorMyRed</item>
     </style>
 
