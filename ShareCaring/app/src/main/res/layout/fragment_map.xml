@@ -1,23 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    <fragment
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <FrameLayout
+        android:id="@+id/child_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Switch
+            android:id="@+id/mapSwitcher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:thumb="@drawable/thumb2"
+            android:track="@drawable/track"
+            android:layout_marginLeft="280dp"
+            android:layout_marginTop="600dp"/>
+    </FrameLayout>
+
     <Switch
-        android:id="@+id/switcher"
+        android:id="@+id/volunteersSwitcher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:fontFamily="sans-serif-condensed"
+        android:fontFamily="cursive"
         android:showText="true"
         android:textOff="Volunteers"
-        android:textOn="Needs" />
+        android:textOn="Needs"
+        android:thumb="@drawable/thumb1"
+        android:track="@drawable/track" />
 
 </RelativeLayout>

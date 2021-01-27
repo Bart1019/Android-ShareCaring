@@ -26,6 +26,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.sharecaring.R;
 import com.example.sharecaring.model.ClusterMarker;
@@ -55,16 +56,19 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback, CompoundButton.OnCheckedChangeListener {
 
     private static final String TAG = "MapsActivity";
     private static final int PERMISSIONS_REQUEST_ENABLE_GPS = 9002;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 9003;
+    private static final String MAP_FRAG_TAG = "Map";
+    private static final String LIST_FRAG_TAG = "List";
     private static final int CARE = -1;
     private static final int TRANSPORT = 2;
     private static final int MEDICATION = 1;
     private static final int ANIMALS = 0;
     private static final int SHOPPING = 3;
+
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -73,14 +77,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     DatabaseReference ref;
     Geocoder geocoder;
     String addressLatLng;
-    Switch aSwitch;
+    Switch offersSwitch, mapSwitch;
 
     List<String> addresses = new ArrayList<>();
-    List<Marker> markers = new ArrayList<>();
     private ClusterManager<ClusterMarker> mClusterManager;
     private MyClusterManagerRenderer mClusterManagerRenderer;
     private List<ClusterMarker> mClusterMarkers = new ArrayList<>();
     Hashtable<String, String> userNames = new Hashtable<String, String>();
+    MapFragment mapFragment;
+    OffersFragment offersFragment;
+    FragmentManager fm;
 
     @Nullable
     @Override
@@ -88,11 +94,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        final SupportMapFragment mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
         // initiate a Switch
-        aSwitch = (Switch) v.findViewById(R.id.switcher);
-        aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        offersSwitch = (Switch) v.findViewById(R.id.volunteersSwitcher);
+        mapSwitch = (Switch) v.findViewById(R.id.mapSwitcher);
+        mapFragment = new MapFragment();
+        offersFragment = new OffersFragment();
+        mapSwitch.setOnCheckedChangeListener(this);
+        fm = getFragmentManager();
+
+        /*aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {  //on means needs
                     truncateMarkers();
@@ -102,10 +114,36 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     getAddresses("true");
                 }
             }
-        });
+        });*/
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
 
         return v;
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+        OffersFragment offersFragment = new OffersFragment();
+        SupportMapFragment mMapFragment;
+
+        if(null == fm) {return;}
+
+        if (b) {
+            mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+            mMapFragment.getView().setVisibility(View.INVISIBLE);
+
+            fm.beginTransaction()
+                    .add(R.id.child_fragment_container, offersFragment, LIST_FRAG_TAG)
+                    .show(offersFragment)
+                    .commit();
+        } else {
+            OffersFragment offerHideFragment = (OffersFragment) fm.findFragmentByTag(LIST_FRAG_TAG);
+            fm.beginTransaction()
+                    .hide(offerHideFragment)
+                    .commit();
+
+            mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+            mMapFragment.getView().setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -211,7 +249,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         //getCurrentLocation();
         geocoder = new Geocoder(getContext());
         Log.d(TAG, "onMapReady: " + geocoder.isPresent());
-        getAddresses("true");
+        //getAddresses("true");
     }
 
     /*private void getCurrentLocation() {
@@ -345,14 +383,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             addMarkers(addressLatLng, description, firstName, img);
         }
 
-        private void drawMarkers(String latLng, String description, int img) {
-            String[] splitStr = latLng.trim().split("\\s+");
-            LatLng address = new LatLng(Double.parseDouble(splitStr[0]), Double.parseDouble(splitStr[1]));
-            Marker marker = mMap.addMarker(new MarkerOptions().position(address).title(description));
-            markers.add(marker);
-            Log.d(TAG, "drawMarkers: " + markers.size());
-        }
-
         private void addMarkers(String latLng, String description, String firstName, int img) {
             if (mMap != null) {
                 String[] splitStr = latLng.trim().split("\\s+");
@@ -371,12 +401,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 }
                 try {
                     String snippet = description;
-                     /*if(userLocation.getUser().getUser_id().equals(FirebaseAuth.getInstance().getUid())){
-                         snippet = "This is you";
-                     }
-                     else{
-                          snippet = "Determine route to " + userLocation.getUser().getUsername() + "?";
-                     }*/
 
                     int avatar = R.drawable.care; // set the default avatar
                     switch (img) {
