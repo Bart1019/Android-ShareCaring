@@ -3,8 +3,11 @@ package com.example.sharecaring.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -28,6 +31,7 @@ public class NotificationActivity extends AppCompatActivity {
     String offerId, userThatAccepted, nameOfUser;
     LinearLayout layoutList;
     ArrayList<String> usersThatAccepted = new ArrayList<>();
+    ImageView imageCall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,13 +95,25 @@ public class NotificationActivity extends AppCompatActivity {
 
 
     private void createNotification() {
-            final View myNotificationView = getLayoutInflater().inflate(R.layout.notification, null, false);
-            TextView myNotificationTextView = (TextView)myNotificationView.findViewById(R.id.textViewSingleNotification);
+        final View myNotificationView = getLayoutInflater().inflate(R.layout.notification, null, false);
+        TextView myNotificationTextView = (TextView)myNotificationView.findViewById(R.id.textViewSingleNotification);
             //getNameOfUser();
-            System.out.println("name of user outside: " + userThatAccepted);
-            myNotificationTextView.setText(userThatAccepted + " accepted your offer");
 
-            layoutList.addView(myNotificationView);
+        myNotificationTextView.setText(userThatAccepted + " accepted your offer");
+
+        imageCall = (ImageView)myNotificationView.findViewById(R.id.imageCall);
+        imageCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("halo");
+                Uri number = Uri.parse("tel:5551234");
+                Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+                if(callIntent.resolveActivity(getPackageManager()) !=null){
+                    startActivity(callIntent);}
+            }
+        });
+
+        layoutList.addView(myNotificationView);
 
     }
 
@@ -109,7 +125,7 @@ public class NotificationActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                     nameOfUser = snapshot.child("firstName").getValue().toString();
-                    System.out.println(nameOfUser);
+                    //System.out.println(nameOfUser);
 
             }
 

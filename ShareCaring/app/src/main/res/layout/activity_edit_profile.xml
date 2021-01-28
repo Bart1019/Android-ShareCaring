@@ -6,17 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".activity.EditProfileActivity">
 
-    <EditText
-        android:id="@+id/editProfileTextFirstName"
-        android:layout_width="229dp"
-        android:layout_height="53dp"
-        android:layout_marginTop="296dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editProfileTextLastName"
+        android:id="@+id/editProfileTextPhone"
         android:layout_width="229dp"
         android:layout_height="53dp"
         android:layout_marginTop="388dp"

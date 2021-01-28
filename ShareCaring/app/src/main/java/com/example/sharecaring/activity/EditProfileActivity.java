@@ -12,8 +12,11 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sharecaring.R;
@@ -25,6 +28,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -35,6 +40,10 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     private static final int RC_CODE = 1000;
     Button uploadBtn, doneBtn;
     CircularImageView profilePhoto;
+    EditText editTextPhone, editTextEmail;
+    FirebaseUser user;
+    FirebaseAuth mAuth;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +57,10 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         doneBtn.setOnClickListener(this);
 
         profilePhoto = findViewById(R.id.profileImg);
+
+        editTextEmail = findViewById(R.id.editProfileTextEmail);
+        editTextPhone = findViewById(R.id.editProfileTextPhone);
+
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -57,7 +70,44 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         if(id == R.id.uploadBtn) {
             uploadFromGallery();
         } else if (id == R.id.btnFinish) {
-            IntentOpener.openIntent(EditProfileActivity.this, ProfileActivity.class);
+            editData();
+            //IntentOpener.openIntent(EditProfileActivity.this, ProfileActivity.class);
+        }
+    }
+
+    private void editData() {
+        final String email = editTextEmail.getText().toString().trim();
+        final String phone = editTextPhone.getText().toString().trim();
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        String userid = user.getUid();
+
+        if(!email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            FirebaseDatabase.getInstance().getReference("Users/"+userid+"/email").setValue(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()) {
+                        Toast.makeText(EditProfileActivity.this, "Email edited successfully", Toast.LENGTH_LONG).show();
+                    }else {
+                        Toast.makeText(EditProfileActivity.this, "Failed to edit emailr", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+
+        }
+
+        if(!phone.isEmpty() && Patterns.PHONE.matcher(phone).matches()) {
+            FirebaseDatabase.getInstance().getReference("Users/"+userid+"/phone").setValue(phone).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()) {
+                        Toast.makeText(EditProfileActivity.this, "Phone number edited successfully", Toast.LENGTH_LONG).show();
+                    }else {
+                        Toast.makeText(EditProfileActivity.this, "Failed to edit phone number", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+
         }
     }
 
