@@ -2,8 +2,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingTop="10dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+    android:paddingTop="20dp"
     android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:background="@drawable/ramka_round"
+    android:id="@+id/parent_offer_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
@@ -12,10 +18,13 @@
         android:layout_width="0dp"
         android:layout_height="55dp"
         android:layout_weight="1"
+        android:layout_marginBottom="1dp"
+        android:layout_marginLeft="20dp"
+        android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.927"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/imageCall"
