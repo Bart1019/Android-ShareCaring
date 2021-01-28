@@ -45,7 +45,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.mikhaellopez.circularimageview.CircularImageView
-        android:id="@+id/profileImg"
+        android:id="@+id/profileImgOffer"
         android:layout_width="210dp"
         android:layout_height="200dp"
         android:layout_marginTop="68dp"

@@ -10,16 +10,12 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.sharecaring.R;
-import com.example.sharecaring.model.IntentOpener;
-import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,8 +27,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
-import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
 
 public class EditProfileActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int RC_CODE = 1000;
@@ -51,7 +45,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         uploadBtn.setOnClickListener(this);
         doneBtn.setOnClickListener(this);
 
-        profilePhoto = findViewById(R.id.profileImg);
+        profilePhoto = findViewById(R.id.profileImgOffer);
         loadingBar = new ProgressDialog(this);
     }
 
@@ -94,7 +88,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                 storageReference.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
-                        Picasso.with(EditProfileActivity.this).load(task.getResult()).into(profilePhoto);
+                        Picasso.get().load(task.getResult()).into(profilePhoto);
                         Toast.makeText(EditProfileActivity.this, "Profile Image stored successfully...", Toast.LENGTH_SHORT).show();
                         loadingBar.dismiss();
                     }

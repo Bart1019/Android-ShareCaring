@@ -2,13 +2,15 @@ package com.example.sharecaring.fragment;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,18 +36,31 @@ import com.google.firebase.storage.StorageReference;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+
 public class ProfileFragment extends Fragment implements View.OnClickListener{
 
     public static final int EDIT_STATUS_CODE = 1000;
     TextView editTextFirstName, editTextEmail;
     ImageButton btnLogOut, btnEditProfile;
-    Button btnMyOffers;
+
     DatabaseReference ref;
     FirebaseUser user;
     FirebaseAuth mAuth;
     String firstNameFromDB, lastNameFromDB, emailFromDB;
-    CircularImageView profilePic;
+    CircularImageView profilePic, offersProfile;
     StorageReference storageReference;
+
+    String description, address, medication, animals, shopping, transport, offerId;
+    LinearLayout layoutList;
+    ImageView imageClose;
+    Switch offerSwitch;
+    ArrayList<String> myAcceptedOffers = new ArrayList<>();
+    Hashtable<String, String> userNames = new Hashtable<String, String>();
+    List<String> usersIds = new ArrayList<>();
 
 
     @Nullable
@@ -59,13 +74,30 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         editTextFirstName = (TextView) v.findViewById(R.id.editProfileTextFirstName);
         editTextEmail = (TextView) v.findViewById(R.id.editProfileTextEmail);
-        btnMyOffers = (Button)v.findViewById(R.id.btnFinish);
-        btnMyOffers.setOnClickListener(this);
+
         btnLogOut = v.findViewById(R.id.btnLogOut);
         btnLogOut.setOnClickListener(this);
         btnEditProfile = v.findViewById(R.id.editBtn);
         btnEditProfile.setOnClickListener(this);
-        profilePic = v.findViewById(R.id.profileImg);
+        profilePic = v.findViewById(R.id.profileImgOffer);
+
+        layoutList = v.findViewById(R.id.layout_list);
+        getMyAcceptedOffers();
+        getMyOffers("Volunteer");
+
+        offerSwitch = v.findViewById(R.id.volunteersSwitcher);
+        offerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {  //on means needs
+                    layoutList.removeAllViews();
+                    getMyOffers("Needs");
+                } else {
+                    layoutList.removeAllViews();
+                    getMyOffers("Volunteer");
+                }
+            }
+        });
+
         loadData();
         return v;
     }
@@ -92,15 +124,19 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         Uri uri = user.getPhotoUrl();
         if(uri != null) {
-            Picasso.with(getActivity()).load(uri).into(profilePic);
+            Picasso.get().load(uri).into(profilePic);
         }
 
-        String path = userid + "/profilePicture.jpg";
+        downloadProfilePic(userid, profilePic);
+    }
+
+    private void downloadProfilePic(String userId, final ImageView profile) {
+        String path = userId + "/profilePicture.jpg";
         final StorageReference storageReference = FirebaseStorage.getInstance().getReference();
         storageReference.child(path).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                Picasso.with(getActivity()).load(uri).into(profilePic);
+                Picasso.get().load(uri).into(profile);
             }
         });
     }
@@ -131,5 +167,200 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.detach(this).attach(this).commit();
         }
+    }
+
+    public void getMyOffers(final String offerType) {
+        getNamesOfAllUsers();
+        final String userid = user.getUid();
+        if(offerType.equals("Needs")) {
+            ref = FirebaseDatabase.getInstance().getReference("Offers");
+            ref.child(userid).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot postSnapshot: snapshot.getChildren()) {
+                        offerId = postSnapshot.getKey();
+                        address = postSnapshot.child("address").getValue().toString();
+                        description = postSnapshot.child("description").getValue().toString();
+                        animals = postSnapshot.child("animals").getValue().toString();
+                        medication = postSnapshot.child("medication").getValue().toString();
+                        shopping = postSnapshot.child("shopping").getValue().toString();
+                        transport = postSnapshot.child("transport").getValue().toString();
+                        putDataToTextView("", "");
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {}
+            });
+        } else if(offerType.equals("Volunteer")) {
+            ref = FirebaseDatabase.getInstance().getReference("Offers");
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot userIdDb : snapshot.getChildren()) {
+                        String firstName = userNames.get(userIdDb.getKey());
+                        String uId = userIdDb.getValue().toString();
+                        System.out.println(userIdDb.getKey());
+                        if(!userIdDb.getKey().equals(userid))
+                            for(DataSnapshot offerIdDb : userIdDb.getChildren()) {
+                                for(String offId : myAcceptedOffers) {
+                                    if(offId.equals(offerIdDb.getKey())) {
+                                        offerId = offerIdDb.getKey();
+                                        address = offerIdDb.child("address").getValue().toString();
+                                        description = offerIdDb.child("description").getValue().toString();
+                                        animals = offerIdDb.child("animals").getValue().toString();
+                                        medication = offerIdDb.child("medication").getValue().toString();
+                                        shopping = offerIdDb.child("shopping").getValue().toString();
+                                        transport = offerIdDb.child("transport").getValue().toString();
+                                        putDataToTextView(firstName, uId);
+                                    }
+                                }
+
+
+                            }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+
+    }
+
+    private void putDataToTextView(String fName, String profile) {
+        final View myOfferView = getLayoutInflater().inflate(R.layout.offer, null, false);
+        TextView myOfferTextView = (TextView)myOfferView.findViewById(R.id.textViewAddress);
+        myOfferTextView.setText(address +"\n" +description);
+        TextView name = (TextView)myOfferView.findViewById(R.id.userName);
+        if (fName.equals("")) {
+            name.setText(user.getDisplayName());
+        } else {
+            name.setText(fName);
+        }
+
+        ImageView profilePhoto = (ImageView)myOfferView.findViewById(R.id.profileImgOffer);
+        if (profile.equals("")) {
+            downloadProfilePic(user.getUid(), profilePhoto);  //mine
+        } else {
+            downloadProfilePic(profile, profilePhoto);   //other
+        }
+
+        ImageView imageAnimals = (ImageView)myOfferView.findViewById(R.id.first);
+        ImageView imageMedication = (ImageView)myOfferView.findViewById(R.id.second);
+        ImageView imageTransport = (ImageView)myOfferView.findViewById(R.id.third);
+        ImageView imageShopping = (ImageView)myOfferView.findViewById(R.id.fourth);
+        List<ImageView> images = new ArrayList<>();
+        List<String> offersTypes = new ArrayList<>();
+
+        images.add(imageAnimals);
+        images.add(imageMedication);
+        images.add(imageTransport);
+        images.add(imageShopping);
+        offersTypes.add(animals);
+        offersTypes.add(medication);
+        offersTypes.add(transport);
+        offersTypes.add(shopping);
+
+        List<Integer> drawables = new ArrayList<>();
+        drawables.add(R.drawable.dog);
+        drawables.add(R.drawable.medicine);
+        drawables.add(R.drawable.car);
+        drawables.add(R.drawable.groceries);
+
+        List<Integer> newDrawables = new ArrayList<>();
+
+        if (isCare(offersTypes)) {
+            imageAnimals.setImageResource(R.drawable.care);
+        } else {
+            for (int i = 0; i < offersTypes.size(); i++) {
+                if (offersTypes.get(i).equals("true")) {
+                    newDrawables.add(drawables.get(i));
+                } else {
+                    newDrawables.add(-1);
+                }
+            }
+
+            for (Iterator<Integer> iter = newDrawables.listIterator(); iter.hasNext(); ) {
+                int a = iter.next();
+                if (a == -1) {
+                    iter.remove();
+                }
+            }
+
+            for (int i = 0; i < newDrawables.size(); i++) {
+                images.get(i).setImageResource(newDrawables.get(i));
+            }
+
+        }
+
+        imageClose = (ImageView)myOfferView.findViewById(R.id.imageClose);
+        imageClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeView(myOfferView);
+            }
+        });
+
+        myOfferView.setTag(offerId);
+        layoutList.addView(myOfferView);
+    }
+
+    private boolean isCare(List<String> offersTypes) {
+        for (String offer : offersTypes) {
+            if (!offer.equals("true"))
+                return false;
+        }
+        return true;
+    }
+
+    public void getNamesOfAllUsers() {
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users");
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot userId : snapshot.getChildren()) {
+                    if(snapshot.exists()) {
+                        String fn = userId.child("firstName").getValue().toString();
+                        userNames.put(userId.getKey(), fn);
+                        usersIds.add(userId.getValue().toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void getMyAcceptedOffers() {
+        String userid = user.getUid();
+        ref = FirebaseDatabase.getInstance().getReference("AcceptedOffers");
+        ref.child(userid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot acceptedOfferId : snapshot.getChildren()) {
+                    myAcceptedOffers.add(acceptedOfferId.getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void removeView(View view) {
+        layoutList.removeView(view);
+        offerId = view.getTag().toString();
+        String userId = user.getUid();
+        ref = FirebaseDatabase.getInstance().getReference("Offers/"+ userId).child(offerId);
+        ref.removeValue();
     }
 }

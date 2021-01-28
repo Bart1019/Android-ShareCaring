@@ -79,7 +79,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
     String addressLatLng;
     Switch offersSwitch, mapSwitch;
 
-    List<String> addresses = new ArrayList<>();
     private ClusterManager<ClusterMarker> mClusterManager;
     private MyClusterManagerRenderer mClusterManagerRenderer;
     private List<ClusterMarker> mClusterMarkers = new ArrayList<>();
@@ -249,7 +248,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        getCurrentLocation();
+        //getCurrentLocation();
         geocoder = new Geocoder(getContext());
         Log.d(TAG, "onMapReady: " + geocoder.isPresent());
         getAddresses("true");
@@ -280,11 +279,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot userId : snapshot.getChildren()) {
-                    //String firstName = userId.child("firstName").getValue().toString();
-                    //String firstName = "me";
-                    //System.out.println(userNames.get(userId.toString()));
                     String firstName = userNames.get(userId.getKey());
-
 
                     for (DataSnapshot offerId : userId.getChildren()) {
                         String addressFromDb = offerId.child("address").getValue().toString();
@@ -341,8 +336,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
                         userNames.put(userId.getKey(), fn);
                     }
                 }
-
-
             }
 
             @Override

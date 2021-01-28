@@ -1,80 +1,114 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
     android:paddingTop="20dp"
     android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:background="@drawable/ramka_round"
+    android:id="@+id/parent_offer_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-        <TextView
-            android:id="@+id/textViewSingleOffer"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.927"
-            app:layout_constraintStart_toStartOf="parent" />
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/profileImgOffer"
+            android:src="@drawable/user"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"/>
 
-        <LinearLayout
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:text="@string/name"
+            android:id="@+id/userName"
+            android:layout_toRightOf="@+id/profileImgOffer"
+            android:textColor="#000"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
+            android:textSize="17sp"
+            android:layout_toEndOf="@+id/profileImgOffer"
+            android:layout_marginStart="20dp" />
 
-                <ImageView
-                    android:id="@+id/imageAnimals"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="left"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="40dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                 />
-                <ImageView
-                    android:id="@+id/imageMedication"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                     />
-                <ImageView
-                    android:id="@+id/imageTransport"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    />
-                <ImageView
-                    android:id="@+id/imageShopping"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    />
+        <TextView
+            android:id="@+id/textViewAddress"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/userName"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/profileImgOffer"
+            android:text="@string/address"
+            android:textSize="14sp"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@+id/profileImgOffer" />
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/first"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="35dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="40dp"
+            android:layout_toRightOf="@+id/userName"
+            android:contentDescription="@string/content"
+            android:layout_toEndOf="@+id/userName" />
+
+        <ImageView
+            android:id="@+id/second"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@+id/first"
+            android:contentDescription="@string/content"
+            android:layout_toEndOf="@+id/first" />
+
+        <ImageView
+            android:id="@+id/third"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@id/second"
+            android:contentDescription="@string/content"
+            android:layout_toEndOf="@id/second" />
+
+        <ImageView
+            android:id="@+id/fourth"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@+id/third"
+            android:contentDescription="@string/content"
+            android:layout_toEndOf="@+id/third" />
 
         <ImageView
             android:id="@+id/imageClose"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="5dp"
+            android:layout_alignParentRight="true"
             android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:contentDescription="@string/content"
             android:src="@drawable/ic_close"
-            android:layout_marginEnd="10dp" />
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="5dp" />
 
-
-
-</LinearLayout>
+</RelativeLayout>

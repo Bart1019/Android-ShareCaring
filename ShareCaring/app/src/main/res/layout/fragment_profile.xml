@@ -33,7 +33,7 @@
             android:src="@drawable/exit" />
 
         <com.mikhaellopez.circularimageview.CircularImageView
-            android:id="@+id/profileImg"
+            android:id="@+id/profileImgOffer"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_centerHorizontal="true"
@@ -60,7 +60,7 @@
             android:id="@+id/editProfileTextFirstName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/profileImg"
+            android:layout_below="@id/profileImgOffer"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="-5dp"
             android:layout_marginBottom="25dp"
@@ -81,17 +81,6 @@
             android:textSize="18sp" />
 
     </RelativeLayout>
-
-    <Button
-        android:id="@+id/btnFinish"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="550dp"
-        android:text="@string/my_offers"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <Switch
         android:id="@+id/volunteersSwitcher"
@@ -129,5 +118,25 @@
         app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
         app:layout_constraintVertical_bias="0.0" />
 
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="310dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/volunteersSwitcher"
+        app:layout_constraintVertical_bias="0.129">
+
+        <LinearLayout
+            android:id="@+id/layout_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:clipToPadding="false"
+            android:orientation="vertical" />
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

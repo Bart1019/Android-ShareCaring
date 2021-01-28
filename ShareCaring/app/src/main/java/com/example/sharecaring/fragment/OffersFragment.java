@@ -1,6 +1,8 @@
 package com.example.sharecaring.fragment;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+
 public class OffersFragment extends Fragment {
 
     DatabaseReference ref;
@@ -38,6 +45,8 @@ public class OffersFragment extends Fragment {
     LinearLayout layoutList;
     Button chatBtn;
     Switch offersSwitch;
+    Hashtable<String, String> userNames = new Hashtable<String, String>();
+
 
     @Nullable
     @Override
@@ -65,6 +74,7 @@ public class OffersFragment extends Fragment {
     }
 
     private void getOfferList(final String offerType) {
+        getNamesOfAllUsers();
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         final String userid = user.getUid();
@@ -74,6 +84,7 @@ public class OffersFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot userIdDb : snapshot.getChildren()) {
                     System.out.println(userIdDb.getKey());
+                    String firstName = userNames.get(userIdDb.getKey());
                     if(!userIdDb.getKey().equals(userid))
                         for(DataSnapshot offerIdDb : userIdDb.getChildren()) {
                             if(offerIdDb.child("isAccepted").getValue().toString().equals("false")) {
@@ -85,7 +96,7 @@ public class OffersFragment extends Fragment {
                                     medication = offerIdDb.child("medication").getValue().toString();
                                     shopping = offerIdDb.child("shopping").getValue().toString();
                                     transport = offerIdDb.child("transport").getValue().toString();
-                                    putDataToTextView();
+                                    putDataToTextView(firstName);
                                 }
                             }
                         }
@@ -99,33 +110,64 @@ public class OffersFragment extends Fragment {
         });
     }
 
-    private void putDataToTextView() {
+    private void putDataToTextView(String fName) {
         final View myOfferView = getLayoutInflater().inflate(R.layout.alloffers, null, false);
-        TextView myOfferTextView = (TextView)myOfferView.findViewById(R.id.textViewSingleOfferList);
+        TextView myOfferTextView = (TextView)myOfferView.findViewById(R.id.textViewAddress);
         myOfferTextView.setText(address + "\n" + description);
+        TextView offerAuthorName = (TextView)myOfferView.findViewById(R.id.userName);
+        offerAuthorName.setText(fName);
 
-        if(animals.equals("true")) {
-            ImageView imageAnimals = (ImageView)myOfferView.findViewById(R.id.imageAnimals);
-            imageAnimals.setImageResource(R.drawable.dog);
+        ImageView imageAnimals = (ImageView)myOfferView.findViewById(R.id.first);
+        ImageView imageMedication = (ImageView)myOfferView.findViewById(R.id.second);
+        ImageView imageTransport = (ImageView)myOfferView.findViewById(R.id.third);
+        ImageView imageShopping = (ImageView)myOfferView.findViewById(R.id.fourth);
+        List<ImageView> images = new ArrayList<>();
+        List<String> offersTypes = new ArrayList<>();
+
+        images.add(imageAnimals);
+        images.add(imageMedication);
+        images.add(imageTransport);
+        images.add(imageShopping);
+        offersTypes.add(animals);
+        offersTypes.add(medication);
+        offersTypes.add(transport);
+        offersTypes.add(shopping);
+
+        List<Integer> drawables = new ArrayList<>();
+        drawables.add(R.drawable.dog);
+        drawables.add(R.drawable.medicine);
+        drawables.add(R.drawable.car);
+        drawables.add(R.drawable.groceries);
+
+        List<Integer> newDrawables = new ArrayList<>();
+
+        if (isCare(offersTypes)) {
+            imageAnimals.setImageResource(R.drawable.care);
+        } else {
+            for (int i = 0; i < offersTypes.size(); i++) {
+                if (offersTypes.get(i).equals("true")) {
+                    newDrawables.add(drawables.get(i));
+                } else {
+                    newDrawables.add(-1);
+                }
+            }
+
+            for (Iterator<Integer> iter = newDrawables.listIterator(); iter.hasNext(); ) {
+                int a = iter.next();
+                if (a == -1) {
+                    iter.remove();
+                }
+            }
+
+            Log.d("lalala", "putDataToTextView: " + newDrawables.size());
+
+            for (int i = 0; i < newDrawables.size(); i++) {
+                images.get(i).setImageResource(newDrawables.get(i));
+            }
+
         }
 
-        if(medication.equals("true")) {
-            ImageView imageMedication = (ImageView)myOfferView.findViewById(R.id.imageMedication);
-            imageMedication.setImageResource(R.drawable.medicine);
-        }
-
-        if(transport.equals("true")) {
-            ImageView imageTransport = (ImageView)myOfferView.findViewById(R.id.imageTransport);
-            imageTransport.setImageResource(R.drawable.car);
-        }
-
-        if(shopping.equals("true")) {
-            ImageView imageShopping = (ImageView)myOfferView.findViewById(R.id.imageShopping);
-            imageShopping.setImageResource(R.drawable.groceries);
-        }
-
-
-        btnAccept = (Button)myOfferView.findViewById(R.id.btnAccept);
+        btnAccept = (Button)myOfferView.findViewById(R.id.acceptBtn);
         btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,6 +176,34 @@ public class OffersFragment extends Fragment {
         });
         myOfferView.setTag(offerId);
         layoutList.addView(myOfferView);
+    }
+
+    private boolean isCare(List<String> offersTypes) {
+        for (String offer : offersTypes) {
+            if (!offer.equals("true"))
+                return false;
+        }
+        return true;
+    }
+
+    public void getNamesOfAllUsers() {
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Users");
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot userId : snapshot.getChildren()) {
+                    if(snapshot.exists()) {
+                        String fn = userId.child("firstName").getValue().toString();
+                        userNames.put(userId.getKey(), fn);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void acceptOffer(View view) {

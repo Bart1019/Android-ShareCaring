@@ -56,6 +56,7 @@
     <string name="address">Your address</string>
     <string name="add_new_offer">Add</string>
     <string name="in_what_help_areas_are_you_interested">In what help areas are you \ninterested?</string>
+    <string name="name">Name</string>
 
 
 </resources>
