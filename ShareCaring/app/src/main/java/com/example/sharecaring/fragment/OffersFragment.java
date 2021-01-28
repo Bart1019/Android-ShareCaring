@@ -1,6 +1,8 @@
 package com.example.sharecaring.fragment;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,6 +48,7 @@ public class OffersFragment extends Fragment {
     Button chatBtn;
     Switch offersSwitch;
     Hashtable<String, String> userNames = new Hashtable<String, String>();
+    Hashtable<String,String> userPhoneNumbers = new Hashtable<>();
 
 
     @Nullable
@@ -85,6 +88,8 @@ public class OffersFragment extends Fragment {
                 for(DataSnapshot userIdDb : snapshot.getChildren()) {
                     System.out.println(userIdDb.getKey());
                     String firstName = userNames.get(userIdDb.getKey());
+                    String userPhoneNumber = userPhoneNumbers.get(userIdDb.getKey());
+
                     if(!userIdDb.getKey().equals(userid))
                         for(DataSnapshot offerIdDb : userIdDb.getChildren()) {
                             if(offerIdDb.child("isAccepted").getValue().toString().equals("false")) {
@@ -96,7 +101,7 @@ public class OffersFragment extends Fragment {
                                     medication = offerIdDb.child("medication").getValue().toString();
                                     shopping = offerIdDb.child("shopping").getValue().toString();
                                     transport = offerIdDb.child("transport").getValue().toString();
-                                    putDataToTextView(firstName);
+                                    putDataToTextView(firstName, userPhoneNumber);
                                 }
                             }
                         }
@@ -110,7 +115,7 @@ public class OffersFragment extends Fragment {
         });
     }
 
-    private void putDataToTextView(String fName) {
+    private void putDataToTextView(String fName, final String phone) {
         final View myOfferView = getLayoutInflater().inflate(R.layout.alloffers, null, false);
         TextView myOfferTextView = (TextView)myOfferView.findViewById(R.id.textViewAddress);
         myOfferTextView.setText(address + "\n" + description);
@@ -121,6 +126,16 @@ public class OffersFragment extends Fragment {
         ImageView imageMedication = (ImageView)myOfferView.findViewById(R.id.second);
         ImageView imageTransport = (ImageView)myOfferView.findViewById(R.id.third);
         ImageView imageShopping = (ImageView)myOfferView.findViewById(R.id.fourth);
+
+        ImageView imageCall = (ImageView)myOfferView.findViewById(R.id.imageCall);
+        imageCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeCall(phone);
+            }
+
+        });
+
         List<ImageView> images = new ArrayList<>();
         List<String> offersTypes = new ArrayList<>();
 
@@ -178,6 +193,18 @@ public class OffersFragment extends Fragment {
         layoutList.addView(myOfferView);
     }
 
+    private void makeCall(String phone) {
+        System.out.println("jestem w callu");
+        if(!phone.equals("No phone number")) {
+            Uri number = Uri.parse("tel:"+phone);
+            Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+            if(callIntent.resolveActivity(getContext().getPackageManager()) !=null){
+                startActivity(callIntent);}
+        } else {
+            Toast.makeText(getContext(), "Wrong phone number", Toast.LENGTH_LONG).show();
+        }
+    }
+
     private boolean isCare(List<String> offersTypes) {
         for (String offer : offersTypes) {
             if (!offer.equals("true"))
@@ -195,6 +222,10 @@ public class OffersFragment extends Fragment {
                     if(snapshot.exists()) {
                         String fn = userId.child("firstName").getValue().toString();
                         userNames.put(userId.getKey(), fn);
+                        if(userId.child("phoneNumber").exists()) {
+                            String phone = userId.child("phoneNumber").getValue().toString();
+                            userPhoneNumbers.put(userId.getKey(),phone);
+                        } else userPhoneNumbers.put(userId.getKey(), "No phone number");
                     }
                 }
             }
