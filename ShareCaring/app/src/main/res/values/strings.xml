@@ -46,6 +46,16 @@
     <string name="volunteers">Volunteer</string>
     <string name="needs">Needs</string>
     <string name="my_offers">My Offers</string>
+    <string name="walking_the_animals">Walking the animals</string>
+    <string name="food_shopping">Food Shopping</string>
+    <string name="medication">Medication</string>
+    <string name="transport">Transport</string>
+    <string name="i_m_down_for_anything">I\'m down for anything</string>
+    <string name="volunteering">Do you want to be a volunteer?</string>
+    <string name="description">Provide short description</string>
+    <string name="address">Your address</string>
+    <string name="add_new_offer">Add</string>
+    <string name="in_what_help_areas_are_you_interested">In what help areas are you \ninterested?</string>
 
 
 </resources>
