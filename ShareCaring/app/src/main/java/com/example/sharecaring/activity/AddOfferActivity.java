@@ -67,6 +67,18 @@ public class AddOfferActivity extends AppCompatActivity {
         final String description = editTextDescription.getText().toString().trim();
         final String address = editTextAddress.getText().toString().trim();
 
+        if (address.isEmpty()) {
+            editTextAddress.setError("Address is required");
+            editTextAddress.requestFocus();
+            return;
+        }
+
+        if (description.isEmpty()) {
+            editTextDescription.setError("Descritpion is required");
+            editTextDescription.requestFocus();
+            return;
+        }
+
         Offer offer = new Offer(description, address, animals, shopping, medication, transport, false, checkBoxOfferType.isChecked());
         FirebaseDatabase.getInstance().getReference("Offers")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())

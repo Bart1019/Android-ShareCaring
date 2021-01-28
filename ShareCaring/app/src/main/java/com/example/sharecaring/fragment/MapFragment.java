@@ -382,8 +382,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
                 default:
                     locationAddress = null;
             }
-            addressLatLng = locationAddress;
-            addMarkers(addressLatLng, description, firstName, img);
+            if (locationAddress != null) {
+                addressLatLng = locationAddress;
+                addMarkers(addressLatLng, description, firstName, img);
+            }
         }
 
         private void addMarkers(String latLng, String description, String firstName, int img) {
@@ -425,14 +427,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
 
                     }
 
-                    ClusterMarker newClusterMarker = new ClusterMarker(
-                            new LatLng(Double.parseDouble(splitStr[0]), Double.parseDouble(splitStr[1])),
-                            firstName,
-                            snippet,
-                            avatar
-                    );
-                    mClusterManager.addItem(newClusterMarker);
-                    mClusterMarkers.add(newClusterMarker);
+                    try {
+                        ClusterMarker newClusterMarker = new ClusterMarker(
+                                new LatLng(Double.parseDouble(splitStr[0]), Double.parseDouble(splitStr[1])),
+                                firstName,
+                                snippet,
+                                avatar
+                        );
+                        mClusterManager.addItem(newClusterMarker);
+                        mClusterMarkers.add(newClusterMarker);
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+
+
                 } catch (NullPointerException e) {
                     Log.e(TAG, "addMapMarkers: NullPointerException: " + e.getMessage());
                 }
