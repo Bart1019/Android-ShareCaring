@@ -1,33 +1,27 @@
 package com.example.sharecaring.fragment;
 
-import android.graphics.Color;
+import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.sharecaring.R;
 import com.example.sharecaring.activity.EditProfileActivity;
-import com.example.sharecaring.activity.MapsActivity;
 import com.example.sharecaring.activity.MyOffersActivity;
-import com.example.sharecaring.activity.NotificationActivity;
-import com.example.sharecaring.activity.OfferList;
-import com.example.sharecaring.activity.ProfileActivity;
 import com.example.sharecaring.activity.StartActivity;
 import com.example.sharecaring.model.IntentOpener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -42,6 +36,7 @@ import com.squareup.picasso.Picasso;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener{
 
+    public static final int EDIT_STATUS_CODE = 1000;
     TextView editTextFirstName, editTextEmail;
     ImageButton btnLogOut, btnEditProfile;
     Button btnMyOffers;
@@ -122,8 +117,19 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 //finish();
                 break;
             case R.id.editBtn:
-                IntentOpener.openIntent(getActivity(), EditProfileActivity.class);
+                Intent intent = new Intent(getContext(), EditProfileActivity.class);
+                startActivityForResult(intent, EDIT_STATUS_CODE);
+                //IntentOpener.openIntent(getActivity(), EditProfileActivity.class);
                 break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (requestCode == EDIT_STATUS_CODE) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.detach(this).attach(this).commit();
         }
     }
 }

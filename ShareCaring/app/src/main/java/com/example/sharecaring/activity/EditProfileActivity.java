@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,11 +31,14 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 public class EditProfileActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int RC_CODE = 1000;
     Button uploadBtn, doneBtn;
     CircularImageView profilePhoto;
+    private ProgressDialog loadingBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +52,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         doneBtn.setOnClickListener(this);
 
         profilePhoto = findViewById(R.id.profileImg);
+        loadingBar = new ProgressDialog(this);
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -57,7 +62,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         if(id == R.id.uploadBtn) {
             uploadFromGallery();
         } else if (id == R.id.btnFinish) {
-            IntentOpener.openIntent(EditProfileActivity.this, ProfileActivity.class);
+            finish();
         }
     }
 
@@ -68,6 +73,11 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             if (resultCode == Activity.RESULT_OK) {
                 Uri imageUri = data.getData();
                 //profilePhoto.setImageURI(imageUri);
+                loadingBar.setTitle("Profile Image");
+                loadingBar.setMessage("Please wait, while we updating your profile image...");
+                loadingBar.show();
+                loadingBar.setCanceledOnTouchOutside(true);
+
                 uploadImageToDb(imageUri);
             }
         }
@@ -85,13 +95,16 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
                         Picasso.with(EditProfileActivity.this).load(task.getResult()).into(profilePhoto);
+                        Toast.makeText(EditProfileActivity.this, "Profile Image stored successfully...", Toast.LENGTH_SHORT).show();
+                        loadingBar.dismiss();
                     }
                 });
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(EditProfileActivity.this, "Image upload failed", Toast.LENGTH_LONG).show();
+                Toast.makeText(EditProfileActivity.this, "Image upload failed, try again", Toast.LENGTH_LONG).show();
+                loadingBar.dismiss();
             }
         });
     }
