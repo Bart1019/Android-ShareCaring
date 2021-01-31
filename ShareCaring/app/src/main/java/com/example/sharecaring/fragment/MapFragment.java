@@ -116,6 +116,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
         mSearch = v.findViewById(R.id.inputSearch);
         searchLayout = v.findViewById(R.id.relLayout1);
 
+        /*mSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSearch.setText("");
+            }
+        });*/
+
         offersSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {  //on means needs
@@ -197,6 +204,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
             Address address = addresses.get(0);
 
             moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), 15f);
+        } else {
+            Toast.makeText(getContext(), "No such address, try again!", Toast.LENGTH_SHORT).show();
         }
     }
 
