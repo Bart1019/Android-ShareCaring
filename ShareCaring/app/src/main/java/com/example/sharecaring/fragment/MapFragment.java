@@ -13,11 +13,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -52,6 +57,7 @@ import com.google.maps.android.clustering.ClusterManager;
 
 import org.json.JSONArray;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -87,6 +93,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
     OffersFragment offersFragment;
     FragmentManager fm;
 
+    private EditText mSearch;
+    RelativeLayout searchLayout;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -103,6 +113,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
         offersFragment = new OffersFragment();
         mapSwitch.setOnCheckedChangeListener(this);
         fm = getFragmentManager();
+        mSearch = v.findViewById(R.id.inputSearch);
+        searchLayout = v.findViewById(R.id.relLayout1);
 
         offersSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -131,6 +143,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
             mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
             mMapFragment.getView().setVisibility(View.INVISIBLE);
             offersSwitch.setVisibility(View.INVISIBLE);
+            searchLayout.setVisibility(View.INVISIBLE);
 
             fm.beginTransaction()
                     .add(R.id.child_fragment_container, offersFragment, LIST_FRAG_TAG)
@@ -138,6 +151,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
                     .commit();
         } else {
             offersSwitch.setVisibility(View.VISIBLE);
+            searchLayout.setVisibility(View.VISIBLE);
+
             OffersFragment offerHideFragment = (OffersFragment) fm.findFragmentByTag(LIST_FRAG_TAG);
             fm.beginTransaction()
                     .hide(offerHideFragment)
@@ -146,6 +161,47 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
             mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
             mMapFragment.getView().setVisibility(View.VISIBLE);
         }
+    }
+
+    private void init() {
+        mSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_SEARCH
+                        || i == EditorInfo.IME_ACTION_DONE
+                        || keyEvent.getAction() == KeyEvent.ACTION_DOWN
+                        || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER) {
+                    Log.d(TAG, "onEditorAction: " + "before geolocate");
+                    //execute method for searching
+                    geolocate();
+                }
+                return false;
+            }
+        });
+    }
+
+    private void geolocate() {
+        Log.d(TAG, "geolocate: " + "geolocating");
+
+        String searchString = mSearch.getText().toString();
+        Geocoder g = new Geocoder(getActivity());
+        List<Address> addresses = new ArrayList<>();
+
+        try {
+            addresses = g.getFromLocationName(searchString, 1);
+        } catch (IOException e) {
+            Log.e(TAG, "geolocate: " + e.getMessage() );
+        }
+
+        if (addresses.size() > 0) {
+            Address address = addresses.get(0);
+
+            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), 15f);
+        }
+    }
+
+    private void moveCamera(LatLng latLng, float zoom) {
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
 
     @Override
@@ -248,6 +304,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        init();
         //getCurrentLocation();
         geocoder = new Geocoder(getContext());
         Log.d(TAG, "onMapReady: " + geocoder.isPresent());
