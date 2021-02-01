@@ -58,6 +58,8 @@
     <string name="in_what_help_areas_are_you_interested">In what help areas are you \ninterested?</string>
     <string name="name">Name</string>
     <string name="accepted_offers">ACCEPTED OFFERS</string>
+    <string name="accepted">accepted</string>
+    <string name="pending">pending</string>
 
 
 </resources>

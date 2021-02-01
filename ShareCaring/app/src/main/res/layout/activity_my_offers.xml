@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,31 +8,106 @@
     tools:context=".activity.MyOffersActivity">
 
 
+    <RadioGroup
+        android:id="@+id/rdogrp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_marginTop="200dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RadioButton
+            android:id="@+id/acceptedOffersBtn"
+            android:layout_width="160dp"
+            android:layout_height="35dp"
+            android:background="@drawable/btn_selector"
+            android:button="@null"
+            android:checked="true"
+            android:fontFamily="casual"
+            android:gravity="center"
+            android:text="@string/accepted"
+            android:textAllCaps="true"
+            android:textColor="@drawable/btn_text_color"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="361dp" />
+
+        <RadioButton
+            android:id="@+id/pendingOffersBtn"
+            android:layout_width="160dp"
+            android:layout_height="35dp"
+            android:background="@drawable/btn_selector"
+            android:button="@null"
+            android:checked="false"
+            android:fontFamily="casual"
+            android:gravity="center"
+            android:text="@string/pending"
+            android:textAllCaps="true"
+            android:textColor="@drawable/btn_text_color"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="196dp"
+            tools:layout_editor_absoluteY="361dp" />
+    </RadioGroup>
+
     <Switch
-        android:id="@+id/switcherMyOffers"
+        android:id="@+id/volunteersSwitcher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:fontFamily="sans-serif-condensed"
+        android:layout_gravity="center_horizontal"
+        android:fontFamily="cursive"
         android:showText="true"
-        android:textOff="Volunteers"
-        android:textOn="Needs" />
+        android:textOff="@string/volunteers"
+        android:textOn="@string/needs"
+        android:thumb="@drawable/thumb1"
+        android:track="@drawable/track"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rdogrp"
+        app:layout_constraintVertical_bias="0.05" />
 
-    <LinearLayout
-        android:id="@+id/layout_list"
+    <ScrollView
+        android:id="@+id/offersScrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"/>
+        android:layout_height="590dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.923">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="300dp"
-        android:layout_marginTop="600dp"
-        android:id="@+id/btnFloat"
-        android:src="@drawable/ic_baseline_add_24"
-        />
+            <TextView
+                android:id="@+id/noOffers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="You have no offers"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:fontFamily="@font/acme"
+                android:textSize="24sp"
+                android:visibility="invisible"/>
 
-</RelativeLayout>
+            <LinearLayout
+                android:id="@+id/layout_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="80dp"
+                android:clipToPadding="false"
+                android:orientation="vertical" />
+        </RelativeLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

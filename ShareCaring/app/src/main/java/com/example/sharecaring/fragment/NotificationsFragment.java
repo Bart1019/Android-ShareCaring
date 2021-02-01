@@ -3,6 +3,7 @@ package com.example.sharecaring.fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,10 @@ public class NotificationsFragment extends Fragment {
         getNamesOfAllUsers();
         getMyOffersId();
         getAcceptedOffers();
+
+        /*if (layoutList.getChildCount() == 0) {
+            Log.d("TAG", "onCreateView: " + "emptyyy");
+        } */
         return v;
     }
 
@@ -86,7 +91,7 @@ public class NotificationsFragment extends Fragment {
                                 if(acceptedOfferIdDb.getValue().equals(myOfferId)) {
                                     userThatAccepted = userIdDb.getKey();
                                     usersThatAccepted.add(userThatAccepted);
-                                    createNotification();
+                                    createNotification(acceptedOfferIdDb.getValue().toString());
                                 }
                             }
                         }
@@ -101,7 +106,7 @@ public class NotificationsFragment extends Fragment {
     }
 
 
-    public void createNotification() {
+    public void createNotification(final String offerId) {
         final View myNotificationView = getLayoutInflater().inflate(R.layout.notification, null, false);
         TextView myNotificationTextView = (TextView)myNotificationView.findViewById(R.id.textViewSingleNotification);
 
@@ -122,6 +127,14 @@ public class NotificationsFragment extends Fragment {
 
         layoutList.addView(myNotificationView);
 
+        final String tag = (String) myNotificationView.getTag();
+
+        myNotificationView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Toast.makeText(getContext(), "clicked" + offerId, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public void getNamesOfAllUsers() {

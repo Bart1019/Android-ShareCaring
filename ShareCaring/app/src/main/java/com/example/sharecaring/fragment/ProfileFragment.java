@@ -108,13 +108,15 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                         getOffersAcceptedByMe("true");
                     }
                 } else if (myOffers.isChecked()) {
-                    if (isChecked) {  //on means needs
+                    layoutList.removeAllViews();
+                    offerSwitch.setVisibility(View.INVISIBLE);
+                    /*if (isChecked) {  //on means needs
                         layoutList.removeAllViews();
                         getMyOffers("false");
                     } else {
                         layoutList.removeAllViews();
                         getMyOffers("true");
-                    }
+                    }*/
                 }
 
             }
@@ -178,10 +180,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 //IntentOpener.openIntent(getActivity(), EditProfileActivity.class);
                 break;
             case R.id.myOffersBtn:
-                //IntentOpener.openIntent(getActivity(), MyOffersActivity.class);
                 layoutList.removeAllViews();
+                IntentOpener.openIntent(getActivity(), MyOffersActivity.class);
+                acceptedOffers.setChecked(true);
                 offerSwitch.setChecked(false);
-                getMyOffers("true");
+                getOffersAcceptedByMe("true");
+                //offerSwitch.setChecked(false);
+                //getMyOffers("true");
                 break;
             case R.id.acceptedOffersBtn:
                 //IntentOpener.openIntent(getActivity(), MyOffersActivity.class);
