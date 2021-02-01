@@ -36,7 +36,8 @@
                 android:background="@android:color/transparent"
                 app:itemIconTint="@drawable/menu_item"
                 app:itemTextColor="@drawable/menu_item"
-                app:itemBackground="@android:color/transparent"/>
+                app:itemBackground="@android:color/transparent"
+                app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"/>
 
         </com.google.android.material.bottomappbar.BottomAppBar>
 

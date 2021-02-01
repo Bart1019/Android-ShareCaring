@@ -1,7 +1,9 @@
 package com.example.sharecaring.fragment;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +12,14 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -61,8 +66,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     ArrayList<String> myAcceptedOffers = new ArrayList<>();
     Hashtable<String, String> userNames = new Hashtable<String, String>();
     List<String> usersIds = new ArrayList<>();
+    RadioButton myOffers, acceptedOffers;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -83,18 +90,34 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         layoutList = v.findViewById(R.id.layout_list);
         getMyAcceptedOffers();
-        getMyOffers("Volunteer");
+        getOffersAcceptedByMe("true");
+
+        myOffers = v.findViewById(R.id.myOffersBtn);
+        myOffers.setOnClickListener(this);
+        acceptedOffers = v.findViewById(R.id.acceptedOffersBtn);
+        acceptedOffers.setOnClickListener(this);
 
         offerSwitch = v.findViewById(R.id.volunteersSwitcher);
         offerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {  //on means needs
-                    layoutList.removeAllViews();
-                    getMyOffers("Needs");
-                } else {
-                    layoutList.removeAllViews();
-                    getMyOffers("Volunteer");
+                if (acceptedOffers.isChecked()) {
+                    if (isChecked) {  //on means needs
+                        layoutList.removeAllViews();
+                        getOffersAcceptedByMe("false");
+                    } else {
+                        layoutList.removeAllViews();
+                        getOffersAcceptedByMe("true");
+                    }
+                } else if (myOffers.isChecked()) {
+                    if (isChecked) {  //on means needs
+                        layoutList.removeAllViews();
+                        getMyOffers("false");
+                    } else {
+                        layoutList.removeAllViews();
+                        getMyOffers("true");
+                    }
                 }
+
             }
         });
 
@@ -144,9 +167,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
-            case R.id.btnFinish:
-                IntentOpener.openIntent(getActivity(), MyOffersActivity.class);
-                break;
             case R.id.btnLogOut:
                 mAuth.signOut();
                 IntentOpener.openIntent(getActivity(), StartActivity.class);
@@ -156,6 +176,18 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 Intent intent = new Intent(getContext(), EditProfileActivity.class);
                 startActivityForResult(intent, EDIT_STATUS_CODE);
                 //IntentOpener.openIntent(getActivity(), EditProfileActivity.class);
+                break;
+            case R.id.myOffersBtn:
+                //IntentOpener.openIntent(getActivity(), MyOffersActivity.class);
+                layoutList.removeAllViews();
+                offerSwitch.setChecked(false);
+                getMyOffers("true");
+                break;
+            case R.id.acceptedOffersBtn:
+                //IntentOpener.openIntent(getActivity(), MyOffersActivity.class);
+                layoutList.removeAllViews();
+                offerSwitch.setChecked(false);
+                getOffersAcceptedByMe("true");
                 break;
         }
     }
@@ -169,23 +201,103 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         }
     }
 
+    /*private void getMyOffers(final String offerType) {
+        getNamesOfAllUsers();
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        final String userid = user.getUid();
+        ref = FirebaseDatabase.getInstance().getReference("Offers");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot userIdDb : snapshot.getChildren()) {
+                    System.out.println(userIdDb.getKey());
+                    String firstName = userNames.get(userIdDb.getKey());
+                    String uId = userIdDb.getValue().toString();
+                    if(!userIdDb.getKey().equals(userid))
+                        for(DataSnapshot offerIdDb : userIdDb.getChildren()) {
+                                if (offerIdDb.child("isVolunteering").getValue().toString().equals(offerType)) {
+                                    offerId = offerIdDb.getKey();
+                                    address = offerIdDb.child("address").getValue().toString();
+                                    description = offerIdDb.child("description").getValue().toString();
+                                    animals = offerIdDb.child("animals").getValue().toString();
+                                    medication = offerIdDb.child("medication").getValue().toString();
+                                    shopping = offerIdDb.child("shopping").getValue().toString();
+                                    transport = offerIdDb.child("transport").getValue().toString();
+                                    putDataToTextView(firstName, uId);
+                                }
+
+                        }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }*/
+
+    private void getOffersAcceptedByMe(final String offerType) {
+        getNamesOfAllUsers();
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        final String userid = user.getUid();
+        ref = FirebaseDatabase.getInstance().getReference("Offers");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot userIdDb : snapshot.getChildren()) {
+                    System.out.println(userIdDb.getKey());
+                    String firstName = userNames.get(userIdDb.getKey());
+                    String uId = userIdDb.getValue().toString();
+                    if(!userIdDb.getKey().equals(userid))
+                        for(DataSnapshot offerIdDb : userIdDb.getChildren()) {
+                            for(String offId : myAcceptedOffers) {
+                                if(offId.equals(offerIdDb.getKey())
+                                        && offerIdDb.child("isVolunteering").getValue().toString().equals(offerType)) {
+                                    offerId = offerIdDb.getKey();
+                                    address = offerIdDb.child("address").getValue().toString();
+                                    description = offerIdDb.child("description").getValue().toString();
+                                    animals = offerIdDb.child("animals").getValue().toString();
+                                    medication = offerIdDb.child("medication").getValue().toString();
+                                    shopping = offerIdDb.child("shopping").getValue().toString();
+                                    transport = offerIdDb.child("transport").getValue().toString();
+                                    putDataToTextView(firstName, uId);
+                                }
+                            }
+
+                        }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+
     public void getMyOffers(final String offerType) {
         getNamesOfAllUsers();
         final String userid = user.getUid();
-        if(offerType.equals("Needs")) {
+
             ref = FirebaseDatabase.getInstance().getReference("Offers");
             ref.child(userid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for (DataSnapshot postSnapshot: snapshot.getChildren()) {
-                        offerId = postSnapshot.getKey();
-                        address = postSnapshot.child("address").getValue().toString();
-                        description = postSnapshot.child("description").getValue().toString();
-                        animals = postSnapshot.child("animals").getValue().toString();
-                        medication = postSnapshot.child("medication").getValue().toString();
-                        shopping = postSnapshot.child("shopping").getValue().toString();
-                        transport = postSnapshot.child("transport").getValue().toString();
-                        putDataToTextView("", "");
+                        if (postSnapshot.child("isVolunteering").getValue().toString().equals(offerType)) {
+                            offerId = postSnapshot.getKey();
+                            address = postSnapshot.child("address").getValue().toString();
+                            description = postSnapshot.child("description").getValue().toString();
+                            animals = postSnapshot.child("animals").getValue().toString();
+                            medication = postSnapshot.child("medication").getValue().toString();
+                            shopping = postSnapshot.child("shopping").getValue().toString();
+                            transport = postSnapshot.child("transport").getValue().toString();
+                            putDataToTextView("", "");
+                        }
                     }
 
                 }
@@ -193,41 +305,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {}
             });
-        } else if(offerType.equals("Volunteer")) {
-            ref = FirebaseDatabase.getInstance().getReference("Offers");
-            ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for(DataSnapshot userIdDb : snapshot.getChildren()) {
-                        String firstName = userNames.get(userIdDb.getKey());
-                        String uId = userIdDb.getValue().toString();
-                        System.out.println(userIdDb.getKey());
-                        if(!userIdDb.getKey().equals(userid))
-                            for(DataSnapshot offerIdDb : userIdDb.getChildren()) {
-                                for(String offId : myAcceptedOffers) {
-                                    if(offId.equals(offerIdDb.getKey())) {
-                                        offerId = offerIdDb.getKey();
-                                        address = offerIdDb.child("address").getValue().toString();
-                                        description = offerIdDb.child("description").getValue().toString();
-                                        animals = offerIdDb.child("animals").getValue().toString();
-                                        medication = offerIdDb.child("medication").getValue().toString();
-                                        shopping = offerIdDb.child("shopping").getValue().toString();
-                                        transport = offerIdDb.child("transport").getValue().toString();
-                                        putDataToTextView(firstName, uId);
-                                    }
-                                }
-
-
-                            }
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        }
 
     }
 

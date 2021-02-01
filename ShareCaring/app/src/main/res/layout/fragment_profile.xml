@@ -79,8 +79,51 @@
             android:text="@string/textview"
             android:textColor="@color/colorMyGray"
             android:textSize="18sp" />
-
     </RelativeLayout>
+
+    <RadioGroup
+        android:id="@+id/rdogrp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/volunteersSwitcher"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout">
+
+        <RadioButton
+            android:id="@+id/acceptedOffersBtn"
+            android:layout_width="160dp"
+            android:layout_height="35dp"
+            android:background="@drawable/btn_selector"
+            android:button="@null"
+            android:checked="true"
+            android:fontFamily="casual"
+            android:gravity="center"
+            android:text="@string/accepted_offers"
+            android:textAllCaps="true"
+            android:textColor="@drawable/btn_text_color"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <RadioButton
+            android:id="@+id/myOffersBtn"
+            android:layout_width="160dp"
+            android:layout_height="35dp"
+            android:background="@drawable/btn_selector"
+            android:button="@null"
+            android:checked="false"
+            android:fontFamily="casual"
+            android:gravity="center"
+            android:text="@string/my_offers"
+            android:textAllCaps="true"
+            android:textColor="@drawable/btn_text_color"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </RadioGroup>
 
     <Switch
         android:id="@+id/volunteersSwitcher"
@@ -93,50 +136,42 @@
         android:textOn="@string/needs"
         android:thumb="@drawable/thumb1"
         android:track="@drawable/track"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
-        app:layout_constraintVertical_bias="0.126" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:fontFamily="@font/acme"
-        android:text="@string/my_offers"
-        android:textAllCaps="true"
-        android:textColor="@color/colorMyPink"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/volunteersSwitcher"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.136" />
 
 
     <ScrollView
+        android:id="@+id/offersScrollView"
         android:layout_width="match_parent"
         android:layout_height="310dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/volunteersSwitcher"
-        app:layout_constraintVertical_bias="0.129">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.923">
 
-        <LinearLayout
-            android:id="@+id/layout_list"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:clipToPadding="false"
-            android:orientation="vertical" />
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/layout_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="80dp"
+                android:clipToPadding="false"
+                android:orientation="vertical" />
+        </RelativeLayout>
+
+
     </ScrollView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
