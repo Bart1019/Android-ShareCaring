@@ -314,7 +314,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         myOfferTextView.setText(address +"\n" +description);
         TextView name = (TextView)myOfferView.findViewById(R.id.userName);
         if (fName.equals("")) {
-            name.setText(user.getDisplayName());
+            name.setText(firstNameFromDB);
         } else {
             name.setText(fName);
         }

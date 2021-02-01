@@ -10,26 +10,33 @@
         android:id="@+id/volunteersSwitcher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="10dp"
         android:fontFamily="cursive"
         android:showText="true"
         android:textOff="Volunteers"
         android:textOn="Needs"
         android:thumb="@drawable/thumb1"
         android:track="@drawable/track" />
+
     <ScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp">
-        <LinearLayout
-            android:id="@+id/layout_list"
+        android:layout_marginTop="55dp">
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:clipToPadding="false"
-            android:orientation="vertical"/>
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/layout_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="80dp"
+                android:layout_marginTop="10dp"
+                android:clipToPadding="false"
+                android:orientation="vertical"/>
+        </RelativeLayout>
+
     </ScrollView>
 
 
