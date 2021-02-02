@@ -1,16 +1,19 @@
 package com.example.sharecaring.activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -41,6 +44,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MyOffersActivity extends AppCompatActivity {
 
@@ -56,6 +61,11 @@ public class MyOffersActivity extends AppCompatActivity {
     TextView noOffers;
     RadioButton pendingOffers, acceptedOffers;
 
+    // Declare the timer
+    private Timer highlightTimer;
+    private TimerTask highlightTimerTask;
+    Intent intent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,9 +79,7 @@ public class MyOffersActivity extends AppCompatActivity {
 
         noOffers = findViewById(R.id.noOffers);
         getMyOffers("true", "true");
-
         offerSwitch = findViewById(R.id.volunteersSwitcher);
-
         offerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 layoutList.removeAllViews();
@@ -225,14 +233,19 @@ public class MyOffersActivity extends AppCompatActivity {
     }
 
     private void downloadProfilePic(String userId, final ImageView profile) {
-        String path = userId + "/profilePicture.jpg";
-        final StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        storageReference.child(path).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Picasso.get().load(uri).into(profile);
-            }
-        });
+        Uri uri = user.getPhotoUrl();
+        if(uri != null) {
+            Picasso.get().load(uri).into(profile);
+        } else {
+            String path = userId + "/profilePicture.jpg";
+            final StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+            storageReference.child(path).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Picasso.get().load(uri).into(profile);
+                }
+            });
+        }
     }
 
     private void removeView(View view) {

@@ -17,6 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.sharecaring.R;
+import com.example.sharecaring.activity.MyOffersActivity;
+import com.example.sharecaring.model.IntentOpener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -91,7 +93,7 @@ public class NotificationsFragment extends Fragment {
                                 if(acceptedOfferIdDb.getValue().equals(myOfferId)) {
                                     userThatAccepted = userIdDb.getKey();
                                     usersThatAccepted.add(userThatAccepted);
-                                    createNotification(acceptedOfferIdDb.getValue().toString());
+                                    createNotification();
                                 }
                             }
                         }
@@ -106,7 +108,7 @@ public class NotificationsFragment extends Fragment {
     }
 
 
-    public void createNotification(final String offerId) {
+    public void createNotification() {
         final View myNotificationView = getLayoutInflater().inflate(R.layout.notification, null, false);
         TextView myNotificationTextView = (TextView)myNotificationView.findViewById(R.id.textViewSingleNotification);
 
@@ -127,12 +129,10 @@ public class NotificationsFragment extends Fragment {
 
         layoutList.addView(myNotificationView);
 
-        final String tag = (String) myNotificationView.getTag();
-
         myNotificationView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Toast.makeText(getContext(), "clicked" + offerId, Toast.LENGTH_LONG).show();
+                IntentOpener.openIntent(getContext(), MyOffersActivity.class);
             }
         });
     }
@@ -153,8 +153,6 @@ public class NotificationsFragment extends Fragment {
 
                     }
                 }
-
-
             }
 
             @Override
