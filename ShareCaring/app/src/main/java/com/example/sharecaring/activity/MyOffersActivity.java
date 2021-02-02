@@ -159,7 +159,7 @@ public class MyOffersActivity extends AppCompatActivity {
         TextView myOfferTextView = (TextView)myOfferView.findViewById(R.id.textViewAddress);
         myOfferTextView.setText(address +"\n" + description);
         TextView name = (TextView)myOfferView.findViewById(R.id.userName);
-        name.setText("Me");
+        name.setText("You");
 
         ImageView profilePhoto = (ImageView)myOfferView.findViewById(R.id.profileImgOffer);
         downloadProfilePic(user.getUid(), profilePhoto);  //mine

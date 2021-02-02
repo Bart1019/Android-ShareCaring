@@ -31,7 +31,7 @@
     <string name="item_map">Map</string>
     <string name="item_profile">Profile</string>
     <string name="item_notifications">Notifications</string>
-    <string name="item_chat">Chat</string>
+    <string name="item_chat">Offers</string>
 
 
     <string name="toast_fb_firebase">Please sign in to continue</string>

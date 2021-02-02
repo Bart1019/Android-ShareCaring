@@ -48,6 +48,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -95,6 +97,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
 
     private EditText mSearch;
     RelativeLayout searchLayout;
+    FirebaseUser user;
+    FirebaseAuth mAuth;
 
 
     @Nullable
@@ -115,13 +119,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
         fm = getFragmentManager();
         mSearch = v.findViewById(R.id.inputSearch);
         searchLayout = v.findViewById(R.id.relLayout1);
-
-        /*mSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mSearch.setText("");
-            }
-        });*/
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
 
         offersSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -314,7 +313,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         init();
-        //getCurrentLocation();
+        getCurrentLocation();
         geocoder = new Geocoder(getContext());
         Log.d(TAG, "onMapReady: " + geocoder.isPresent());
         getAddresses("true");
@@ -340,44 +339,52 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Compoun
 
     private void getAddresses(final String markerKinds) {
         getNamesOfAllUsers();
+        final String myUid = user.getUid();
         ref = FirebaseDatabase.getInstance().getReference("Offers");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot userId : snapshot.getChildren()) {
-                    String firstName = userNames.get(userId.getKey());
+                    String firstName;
+                    if (myUid.equals(userId)) {
+                        firstName = "You";
+                    } else {
+                        firstName = userNames.get(userId.getKey());
+                    }
 
                     for (DataSnapshot offerId : userId.getChildren()) {
-                        String addressFromDb = offerId.child("address").getValue().toString();
-                        int offerType = 0;
-                        List<String> offerTypes = new ArrayList<>();
-                        offerTypes.add(offerId.child("animals").getValue().toString());
-                        offerTypes.add(offerId.child("medication").getValue().toString());
-                        offerTypes.add(offerId.child("transport").getValue().toString());
-                        offerTypes.add(offerId.child("shopping").getValue().toString());
+                        if (offerId.child("isAccepted").getValue().toString().equals("false")) {
+                            String addressFromDb = offerId.child("address").getValue().toString();
+                            int offerType = 0;
+                            List<String> offerTypes = new ArrayList<>();
+                            offerTypes.add(offerId.child("animals").getValue().toString());
+                            offerTypes.add(offerId.child("medication").getValue().toString());
+                            offerTypes.add(offerId.child("transport").getValue().toString());
+                            offerTypes.add(offerId.child("shopping").getValue().toString());
 
-                        int count = 0;
-                        for (String offer : offerTypes) {
-                            if (offer.equals("true")) {
-                                count++;
-                            }
-                        }
-
-                        if (count > 1) {    //if the offer has multiple types
-                            offerType = CARE;  //care
-                        } else {
-                            for (int i = 0; i < offerTypes.size(); i++) {
-                                if (offerTypes.get(i).equals("true")) {
-                                    offerType = i;
-                                    break;
+                            int count = 0;
+                            for (String offer : offerTypes) {
+                                if (offer.equals("true")) {
+                                    count++;
                                 }
                             }
-                        }
 
-                        if (offerId.child("isVolunteering").getValue().toString().equals(markerKinds)) {
-                            GeocodingLocation locationAddress = new GeocodingLocation();
-                            locationAddress.getAddressFromLocation(addressFromDb,
-                                    getContext(), new GeocoderHandler(firstName, offerId.child("description").getValue().toString(), offerType));
+                            if (count > 1) {    //if the offer has multiple types
+                                offerType = CARE;  //care
+                            } else {
+                                for (int i = 0; i < offerTypes.size(); i++) {
+                                    if (offerTypes.get(i).equals("true")) {
+                                        offerType = i;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (offerId.child("isVolunteering").getValue().toString().equals(markerKinds)) {
+                                GeocodingLocation locationAddress = new GeocodingLocation();
+                                locationAddress.getAddressFromLocation(addressFromDb,
+                                        getContext(), new GeocoderHandler(firstName, offerId.child("description").getValue().toString(), offerType));
+                            }
                         }
                     }
                 }

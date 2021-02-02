@@ -49,6 +49,7 @@ public class OffersFragment extends Fragment {
     Switch offersSwitch;
     Hashtable<String, String> userNames = new Hashtable<String, String>();
     Hashtable<String,String> userPhoneNumbers = new Hashtable<>();
+    TextView noOffers;
 
 
     @Nullable
@@ -56,7 +57,7 @@ public class OffersFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_offers, container, false);
         layoutList = v.findViewById(R.id.layout_list);
-
+        noOffers = v.findViewById(R.id.noOffers);
         offersSwitch = (Switch) v.findViewById(R.id.volunteersSwitcher);
 
         offersSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -85,6 +86,7 @@ public class OffersFragment extends Fragment {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean exists = false;
                 for(DataSnapshot userIdDb : snapshot.getChildren()) {
                     System.out.println(userIdDb.getKey());
                     String firstName = userNames.get(userIdDb.getKey());
@@ -101,10 +103,17 @@ public class OffersFragment extends Fragment {
                                     medication = offerIdDb.child("medication").getValue().toString();
                                     shopping = offerIdDb.child("shopping").getValue().toString();
                                     transport = offerIdDb.child("transport").getValue().toString();
+                                    exists = true;
                                     putDataToTextView(firstName, userPhoneNumber);
                                 }
                             }
                         }
+                }
+                Log.d("TAG", "onDataChange: " + exists);
+                if (exists) {
+                    noOffers.setVisibility(View.INVISIBLE);
+                } else {
+                    noOffers.setVisibility(View.VISIBLE);
                 }
             }
 

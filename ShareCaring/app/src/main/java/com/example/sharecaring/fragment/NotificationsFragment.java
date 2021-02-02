@@ -42,6 +42,7 @@ public class NotificationsFragment extends Fragment {
     Hashtable<String, String> userNames = new Hashtable<String, String>();
     Hashtable<String,String> userPhones = new Hashtable<>();
     ImageView imageCall;
+    TextView noOffers;
 
     @Nullable
     @Override
@@ -51,6 +52,7 @@ public class NotificationsFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         layoutList = v.findViewById(R.id.layout_list);
+        noOffers = v.findViewById(R.id.noOffers);
         getNamesOfAllUsers();
         getMyOffersId();
         getAcceptedOffers();
@@ -86,6 +88,7 @@ public class NotificationsFragment extends Fragment {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean exists = false;
                 for(DataSnapshot userIdDb : snapshot.getChildren()) {
                     if(!userIdDb.getKey().equals(userid))
                         for(DataSnapshot acceptedOfferIdDb : userIdDb.getChildren()) {
@@ -93,10 +96,17 @@ public class NotificationsFragment extends Fragment {
                                 if(acceptedOfferIdDb.getValue().equals(myOfferId)) {
                                     userThatAccepted = userIdDb.getKey();
                                     usersThatAccepted.add(userThatAccepted);
+                                    exists = true;
                                     createNotification();
                                 }
                             }
                         }
+                }
+                Log.d("TAG", "onDataChange: " + exists);
+                if (exists) {
+                    noOffers.setVisibility(View.INVISIBLE);
+                } else {
+                    noOffers.setVisibility(View.VISIBLE);
                 }
             }
 
