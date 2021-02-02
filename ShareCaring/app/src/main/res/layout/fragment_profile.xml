@@ -43,18 +43,16 @@
             app:civ_shadow="true"
             app:civ_shadow_radius="15dp" />
 
-        <ImageButton
-            android:id="@+id/editBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/content"
-            android:src="@drawable/edit" />
+        <Button
+            android:id="@+id/uploadBtn"
+            android:layout_width="120dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="130dp"
+            android:text="@string/upload_profile_pic"
+            android:background="@drawable/rounded_button_colored"
+            android:layout_centerHorizontal="true"
+            android:backgroundTint="@color/colorMyRed"
+            android:textColor="@color/background"/>
 
         <TextView
             android:id="@+id/editProfileTextFirstName"
@@ -168,8 +166,8 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:fontFamily="@font/acme"
-                android:textSize="24sp"
-                android:visibility="invisible"/>
+                android:textStyle="bold"
+                android:textSize="24sp"/>
 
             <LinearLayout
                 android:id="@+id/layout_list"

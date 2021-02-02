@@ -1,14 +1,18 @@
 package com.example.sharecaring.fragment;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -30,7 +34,10 @@ import com.example.sharecaring.activity.MyOffersActivity;
 import com.example.sharecaring.activity.StartActivity;
 import com.example.sharecaring.model.IntentOpener;
 import com.example.sharecaring.model.UserCallback;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -40,6 +47,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
@@ -49,7 +57,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener {
-
+    private static final int RC_CODE = 1001;
     public static final int EDIT_STATUS_CODE = 1000;
     TextView editTextFirstName, editTextEmail;
     ImageButton btnLogOut, btnEditProfile;
@@ -70,6 +78,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     List<String> usersIds = new ArrayList<>();
     RadioButton myOffers, acceptedOffers;
     TextView noOffers;
+    private ProgressDialog loadingBar;
+    Button uploadBtn;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Nullable
@@ -85,8 +95,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         btnLogOut = v.findViewById(R.id.btnLogOut);
         btnLogOut.setOnClickListener(this);
-        btnEditProfile = v.findViewById(R.id.editBtn);
-        btnEditProfile.setOnClickListener(this);
+        uploadBtn = v.findViewById(R.id.uploadBtn);
+        uploadBtn.setOnClickListener(this);
         profilePic = v.findViewById(R.id.profileImgOffer);
 
         layoutList = v.findViewById(R.id.layout_list);
@@ -95,6 +105,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         acceptedOffers = v.findViewById(R.id.acceptedOffersBtn);
         acceptedOffers.setOnClickListener(this);
         noOffers = v.findViewById(R.id.noOffers);
+        loadingBar = new ProgressDialog(getContext());
 
         offerSwitch = v.findViewById(R.id.volunteersSwitcher);
         offerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -110,15 +121,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 } else if (myOffers.isChecked()) {
                     layoutList.removeAllViews();
                     offerSwitch.setVisibility(View.INVISIBLE);
-                    /*if (isChecked) {  //on means needs
-                        layoutList.removeAllViews();
-                        getMyOffers("false");
-                    } else {
-                        layoutList.removeAllViews();
-                        getMyOffers("true");
-                    }*/
                 }
-
             }
         });
 
@@ -172,12 +175,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             case R.id.btnLogOut:
                 mAuth.signOut();
                 IntentOpener.openIntent(getActivity(), StartActivity.class);
-                //finish();
+                getActivity().finish();
                 break;
-            case R.id.editBtn:
-                Intent intent = new Intent(getContext(), EditProfileActivity.class);
-                startActivityForResult(intent, EDIT_STATUS_CODE);
-                //IntentOpener.openIntent(getActivity(), EditProfileActivity.class);
+            case R.id.uploadBtn:
+                uploadFromGallery();
                 break;
             case R.id.myOffersBtn:
                 layoutList.removeAllViews();
@@ -185,11 +186,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 acceptedOffers.setChecked(true);
                 offerSwitch.setChecked(false);
                 getOffersAcceptedByMe("true");
-                //offerSwitch.setChecked(false);
-                //getMyOffers("true");
                 break;
             case R.id.acceptedOffersBtn:
-                //IntentOpener.openIntent(getActivity(), MyOffersActivity.class);
                 layoutList.removeAllViews();
                 offerSwitch.setChecked(false);
                 getOffersAcceptedByMe("true");
@@ -199,48 +197,52 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == EDIT_STATUS_CODE) {
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.detach(this).attach(this).commit();
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                Uri imageUri = data.getData();
+                //profilePhoto.setImageURI(imageUri);
+                loadingBar.setTitle("Profile Image");
+                loadingBar.setMessage("Please wait, while we updating your profile image...");
+                loadingBar.show();
+                loadingBar.setCanceledOnTouchOutside(true);
+
+                uploadImageToDb(imageUri);
+            }
         }
     }
 
-    /*private void getMyOffers(final String offerType) {
-        getNamesOfAllUsers();
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-        final String userid = user.getUid();
-        ref = FirebaseDatabase.getInstance().getReference("Offers");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void uploadImageToDb(Uri uri) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String userId = user.getUid();
+        String path = userId + "/profilePicture.jpg";
+        final StorageReference storageReference = FirebaseStorage.getInstance().getReference(path);
+        storageReference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot userIdDb : snapshot.getChildren()) {
-                    System.out.println(userIdDb.getKey());
-                    String firstName = userNames.get(userIdDb.getKey());
-                    String uId = userIdDb.getValue().toString();
-                    if(!userIdDb.getKey().equals(userid))
-                        for(DataSnapshot offerIdDb : userIdDb.getChildren()) {
-                                if (offerIdDb.child("isVolunteering").getValue().toString().equals(offerType)) {
-                                    offerId = offerIdDb.getKey();
-                                    address = offerIdDb.child("address").getValue().toString();
-                                    description = offerIdDb.child("description").getValue().toString();
-                                    animals = offerIdDb.child("animals").getValue().toString();
-                                    medication = offerIdDb.child("medication").getValue().toString();
-                                    shopping = offerIdDb.child("shopping").getValue().toString();
-                                    transport = offerIdDb.child("transport").getValue().toString();
-                                    putDataToTextView(firstName, uId);
-                                }
-
-                        }
-                }
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                storageReference.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        Picasso.get().load(task.getResult()).into(profilePic);
+                        Toast.makeText(getContext(), "Profile Image stored successfully...", Toast.LENGTH_SHORT).show();
+                        loadingBar.dismiss();
+                    }
+                });
             }
-
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(), "Image upload failed, try again", Toast.LENGTH_LONG).show();
+                loadingBar.dismiss();
             }
         });
-    }*/
+    }
+
+    private void uploadFromGallery() {
+        //returns the particular image uri from the gallery that the user clicked on
+        Intent openGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(openGallery, RC_CODE);
+    }
 
     private void getOffersAcceptedByMe(final String offerType) {
         getNamesOfAllUsers();
